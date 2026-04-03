@@ -8,6 +8,11 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import api from '@/services/api';
 
+import { generateSalt, encodeBinary, deriveKey, encryptData } from '@/utils/crypto';
+
+const VERIFY_TOKEN_KEY = 'zk_verify_token';
+const VERIFY_PLAINTEXT = 'zk-pass-verified';
+
 export default function Signup() {
     const [formData, setFormData] = useState({ email: '', password: '' });
     const [loading, setLoading] = useState(false);
@@ -20,7 +25,35 @@ export default function Signup() {
         setError(null);
 
         try {
-            await api.post('/auth/signup', formData);
+            // Generate a unique salt for the ZK vault key derivation (PBKDF2)
+            const salt = generateSalt();
+            const saltBase64 = encodeBinary(salt.buffer as ArrayBuffer);
+            
+            // Store locally for immediate dashboard use
+            localStorage.setItem('zk_vault_salt', saltBase64);
+
+            await api.post('/auth/signup', {
+                ...formData,
+                vaultSalt: saltBase64
+            });
+
+            // Derive the key and store a local verify token for future UnlockVault checks
+            const derivedKey = await deriveKey(formData.password, salt.buffer as ArrayBuffer);
+            const localToken = await encryptData(
+                { verify: VERIFY_PLAINTEXT },
+                derivedKey,
+                salt.buffer as ArrayBuffer
+            );
+            localStorage.setItem(VERIFY_TOKEN_KEY, JSON.stringify(localToken));
+
+            // Also store an encrypted verify entry in the vault for cross-device support
+            const encryptedPayload = await encryptData(
+                { verify: VERIFY_PLAINTEXT },
+                derivedKey,
+                salt.buffer as ArrayBuffer
+            );
+            await api.post('/vault', { ...encryptedPayload });
+            
             router.push('/dashboard');
         } catch (err: any) {
             setError(err);

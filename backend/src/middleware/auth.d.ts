@@ -8,3 +8,4 @@ declare global {
 }
 export declare const protect: (req: Request, res: Response, next: NextFunction) => Promise<void>;
 //# sourceMappingURL=auth.d.ts.map
+

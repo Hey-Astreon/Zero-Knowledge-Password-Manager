@@ -102,3 +102,4 @@ declare const VaultEntry: mongoose.Model<{
 }>;
 export default VaultEntry;
 //# sourceMappingURL=VaultEntry.d.ts.map
+

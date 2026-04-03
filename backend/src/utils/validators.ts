@@ -17,12 +17,12 @@ export const loginSchema = z.object({
 
 export const vaultEntrySchema = z.object({
     body: z.object({
-        site: z.string().min(1, 'Site is required'),
-        username: z.string().min(1, 'Username is required'),
-        password: z.string().min(1, 'Password/Encrypted Content is required'),
-        iv: z.string().optional(), // Mandatory for Phase 2
-        notes: z.string().optional(),
+        encryptedData: z.string().min(1, 'Encrypted data blob is required'),
+        iv: z.string().min(1, 'Encryption IV is required'),
+        salt: z.string().min(1, 'Encryption salt is required'),
+        version: z.number().optional(),
         favorite: z.boolean().optional()
     })
 });
+
 

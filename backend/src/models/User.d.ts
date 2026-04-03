@@ -70,3 +70,4 @@ declare const User: mongoose.Model<{
 }>;
 export default User;
 //# sourceMappingURL=User.d.ts.map
+

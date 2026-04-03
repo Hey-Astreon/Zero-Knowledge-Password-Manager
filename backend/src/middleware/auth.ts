@@ -56,3 +56,4 @@ export const protect = async (req: Request, res: Response, next: NextFunction) =
     next(new AppError('Invalid token. Please log in again!', 401));
   }
 };
+

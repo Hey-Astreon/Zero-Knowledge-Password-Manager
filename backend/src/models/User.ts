@@ -17,7 +17,11 @@ const userSchema = new mongoose.Schema({
     },
     salt: {
         type: String,
-        required: false // Optional for Phase 1 compatibility, mandatory for Phase 2
+        required: false
+    },
+    vaultSalt: {
+        type: String,
+        required: [true, 'Vault salt is required for ZK encryption']
     }
 }, { timestamps: true });
 
@@ -34,3 +38,4 @@ userSchema.methods.correctPassword = async function(candidatePassword: string, u
 
 const User = mongoose.model('User', userSchema);
 export default User;
+

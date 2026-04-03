@@ -111,7 +111,7 @@ export async function encryptData(data: any, key: CryptoKey, salt: ArrayBuffer) 
  * Decrypts a full production payload back into original JSON
  */
 export async function decryptData(
-    payload: { encryptedData: string; iv: string; version?: number },
+    payload: { encryptedData: string; iv: string; salt?: string; version?: number },
     key: CryptoKey
 ): Promise<any> {
     const { encryptedData, iv } = payload;

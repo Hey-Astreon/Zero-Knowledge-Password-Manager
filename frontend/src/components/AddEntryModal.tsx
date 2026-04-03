@@ -11,6 +11,9 @@ interface AddEntryModalProps {
     onAdd: (entry: any) => Promise<boolean>;
 }
 
+import { PasswordGenerator } from './PasswordGenerator';
+import { Wand2, Sparkles, ShieldCheck } from 'lucide-react';
+
 export const AddEntryModal = ({ isOpen, onClose, onAdd }: AddEntryModalProps) => {
     const [formData, setFormData] = useState({
         site: '',
@@ -19,8 +22,14 @@ export const AddEntryModal = ({ isOpen, onClose, onAdd }: AddEntryModalProps) =>
         notes: '',
     });
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [showGenerator, setShowGenerator] = useState(false);
 
     if (!isOpen) return null;
+
+    const handleApplyPassword = (pass: string) => {
+        setFormData({ ...formData, password: pass });
+        setShowGenerator(false);
+    };
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -70,15 +79,34 @@ export const AddEntryModal = ({ isOpen, onClose, onAdd }: AddEntryModalProps) =>
                         onChange={(e) => setFormData({ ...formData, username: e.target.value })}
                         icon={<User size={18} />}
                     />
-                    <Input
-                        label="Password"
-                        type="password"
-                        placeholder="••••••••"
-                        required
-                        value={formData.password}
-                        onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                        icon={<Lock size={18} />}
-                    />
+                    <div className="relative group">
+                        <Input
+                            label="Password"
+                            type={showGenerator ? "text" : "password"}
+                            placeholder="••••••••"
+                            required
+                            value={formData.password}
+                            onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                            icon={<Lock size={18} />}
+                            className="pr-12"
+                        />
+                        <button
+                            type="button"
+                            onClick={() => setShowGenerator(!showGenerator)}
+                            className={`absolute right-3 top-9 p-1.5 rounded-lg transition-all ${
+                                showGenerator ? 'bg-indigo-500 text-white shadow-lg shadow-indigo-500/20' : 'text-zinc-500 hover:text-indigo-400 hover:bg-zinc-800'
+                            }`}
+                            title="Generate Secure Password"
+                        >
+                            <Wand2 size={16} />
+                        </button>
+                    </div>
+
+                    {showGenerator && (
+                        <div className="animate-in slide-in-from-top-2 duration-300">
+                            <PasswordGenerator onApply={handleApplyPassword} />
+                        </div>
+                    )}
                     <div className="space-y-1.5">
                         <label className="text-sm font-medium text-zinc-400">Notes (Optional)</label>
                         <textarea

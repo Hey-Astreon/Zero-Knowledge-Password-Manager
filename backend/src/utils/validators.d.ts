@@ -23,3 +23,4 @@ export declare const vaultEntrySchema: z.ZodObject<{
     }, z.core.$strip>;
 }, z.core.$strip>;
 //# sourceMappingURL=validators.d.ts.map
+

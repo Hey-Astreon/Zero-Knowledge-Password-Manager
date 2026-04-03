@@ -5,3 +5,4 @@ export declare class AppError extends Error {
     constructor(message: string, statusCode: number);
 }
 //# sourceMappingURL=AppError.d.ts.map
+

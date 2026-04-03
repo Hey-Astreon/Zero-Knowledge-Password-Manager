@@ -20,14 +20,14 @@ export const getAllEntries = async (req: Request, res: Response, next: NextFunct
 
 export const createEntry = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const { site, username, password, notes, favorite } = req.body;
+        const { encryptedData, iv, salt, version, favorite } = req.body;
         
         const newEntry = await VaultEntry.create({
             userId: req.user._id,
-            site,
-            username,
-            password,
-            notes,
+            encryptedData,
+            iv,
+            salt,
+            version,
             favorite
         });
 
@@ -84,3 +84,4 @@ export const updateEntry = async (req: Request, res: Response, next: NextFunctio
         next(err);
     }
 };
+

@@ -17,3 +17,4 @@ router.route('/:id')
     .patch(validate(vaultEntrySchema.partial()), updateEntry);
 
 export default router;
+

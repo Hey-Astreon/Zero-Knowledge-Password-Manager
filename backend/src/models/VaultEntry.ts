@@ -6,25 +6,21 @@ const vaultEntrySchema = new mongoose.Schema({
         ref: 'User',
         required: [true, 'Vault entry must belong to a user']
     },
-    site: {
+    encryptedData: {
         type: String,
-        required: [true, 'Site name is required']
-    },
-    username: {
-        type: String,
-        required: [true, 'Username is required']
-    },
-    password: {
-        type: String,
-        required: [true, 'Encrypted/Plain-text password is required']
+        required: [true, 'Encrypted data blob is required']
     },
     iv: {
         type: String,
-        required: false // Optional for Phase 1, mandatory for Phase 2
+        required: [true, 'Encryption IV is required']
     },
-    notes: {
+    salt: {
         type: String,
-        default: ''
+        required: [true, 'Encryption salt is required']
+    },
+    version: {
+        type: Number,
+        default: 1
     },
     favorite: {
         type: Boolean,
@@ -34,3 +30,4 @@ const vaultEntrySchema = new mongoose.Schema({
 
 const VaultEntry = mongoose.model('VaultEntry', vaultEntrySchema);
 export default VaultEntry;
+

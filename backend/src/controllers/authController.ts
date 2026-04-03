@@ -7,7 +7,8 @@ export const signup = async (req: Request, res: Response, next: NextFunction) =>
     try {
         const newUser = await User.create({
             email: req.body.email,
-            password: req.body.password
+            password: req.body.password,
+            vaultSalt: req.body.vaultSalt
         });
 
         createSendToken(newUser, 201, res);
@@ -29,7 +30,7 @@ export const login = async (req: Request, res: Response, next: NextFunction) => 
         }
 
         // 2) Check if user exists && password is correct
-        const user = await User.findOne({ email }).select('+password');
+        const user = await User.findOne({ email }).select('+password +vaultSalt');
 
         if (!user || !(await (user as any).correctPassword(password, user.password))) {
             return next(new AppError('Incorrect email or password', 401));
@@ -49,3 +50,4 @@ export const logout = (req: Request, res: Response) => {
     });
     res.status(200).json({ success: true, message: 'Logged out successfully' });
 };
+

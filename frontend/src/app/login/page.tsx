@@ -7,6 +7,10 @@ import { Input } from '@/components/Input';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import api from '@/services/api';
+import { deriveKey, encryptData, decodeBinary } from '@/utils/crypto';
+
+const VERIFY_TOKEN_KEY = 'zk_verify_token';
+const VERIFY_PLAINTEXT = 'zk-pass-verified';
 
 export default function Login() {
     const [formData, setFormData] = useState({ email: '', password: '' });
@@ -20,7 +24,28 @@ export default function Login() {
         setError(null);
 
         try {
-            await api.post('/auth/login', formData);
+            const response = await api.post('/auth/login', formData);
+            const user = response.data.data.user;
+            
+            if (user.vaultSalt) {
+                localStorage.setItem('zk_vault_salt', user.vaultSalt);
+
+                // Derive the encryption key and store a local verify token.
+                // This lets UnlockVault validate the password client-side (true ZK).
+                try {
+                    const saltBuffer = decodeBinary(user.vaultSalt);
+                    const derivedKey = await deriveKey(formData.password, saltBuffer);
+                    const token = await encryptData(
+                        { verify: VERIFY_PLAINTEXT },
+                        derivedKey,
+                        saltBuffer
+                    );
+                    localStorage.setItem(VERIFY_TOKEN_KEY, JSON.stringify(token));
+                } catch {
+                    // Non-critical — user can still log in; token created next time
+                }
+            }
+            
             router.push('/dashboard');
         } catch (err: any) {
             setError(err);

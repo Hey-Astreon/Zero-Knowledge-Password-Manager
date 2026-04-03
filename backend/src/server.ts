@@ -1,4 +1,7 @@
 import express from 'express';
+import dotenv from 'dotenv';
+dotenv.config();
+
 import cors from 'cors';
 import morgan from 'morgan';
 import cookieParser from 'cookie-parser';
@@ -9,6 +12,7 @@ import { AppError } from './utils/AppError.js';
 
 import authRouter from './routes/authRoutes.js';
 import vaultRouter from './routes/vaultRoutes.js';
+import shareRouter from './routes/shareRoutes.js';
 
 // Connect to Database
 connectDB();
@@ -40,10 +44,11 @@ app.use(cookieParser());
 // 2. ROUTES
 app.use('/api/auth', authRouter);
 app.use('/api/vault', vaultRouter);
+app.use('/api/share', shareRouter);
 
 
 // 3. UNHANDLED ROUTES
-app.all('*', (req, res, next) => {
+app.all('/{*path}', (req, res, next) => {
     next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));
 });
 
@@ -54,3 +59,4 @@ const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
 });
+

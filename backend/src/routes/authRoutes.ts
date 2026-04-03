@@ -10,3 +10,4 @@ router.post('/login', validate(loginSchema), login);
 router.get('/logout', logout);
 
 export default router;
+

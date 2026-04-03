@@ -31,3 +31,4 @@ export const createSendToken = (user: any, statusCode: number, res: Response) =>
         }
     });
 };
+
