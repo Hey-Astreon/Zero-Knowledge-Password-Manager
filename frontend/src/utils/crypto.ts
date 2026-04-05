@@ -151,3 +151,40 @@ export function generateSalt(): Uint8Array {
 }
 
 export { toBase64 as encodeBinary, fromBase64 as decodeBinary };
+
+/**
+ * Derives a server-side authentication hash from the master password.
+ * Uses a SEPARATE PBKDF2 derivation (different purpose than vault key)
+ * so the server NEVER receives the raw password or the vault encryption key.
+ *
+ * authHash = PBKDF2(password, "zk-auth-" + salt, 100_000 iterations, SHA-256)
+ */
+export async function deriveAuthHash(password: string, saltBase64: string): Promise<string> {
+    validateInput(password, 'Password');
+    validateInput(saltBase64, 'Salt');
+
+    const encoder = new TextEncoder();
+    // Prefix the salt to domain-separate auth derivation from vault key derivation
+    const authSaltBytes = encoder.encode('zk-auth-' + saltBase64);
+
+    const baseKey = await crypto.subtle.importKey(
+        'raw',
+        encoder.encode(password),
+        'PBKDF2',
+        false,
+        ['deriveBits']
+    );
+
+    const hashBuffer = await crypto.subtle.deriveBits(
+        {
+            name: 'PBKDF2',
+            salt: authSaltBytes,
+            iterations: 100_000,
+            hash: 'SHA-256',
+        },
+        baseKey,
+        256 // 32-byte output
+    );
+
+    return toBase64(hashBuffer);
+}

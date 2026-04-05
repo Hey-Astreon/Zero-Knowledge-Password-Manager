@@ -9,9 +9,19 @@ const userSchema = new mongoose.Schema({
         lowercase: true,
         trim: true
     },
+    authProvider: {
+        type: String,
+        enum: ['local', 'github'],
+        default: 'local'
+    },
+    githubId: {
+        type: String,
+        sparse: true,
+        unique: true
+    },
     password: {
         type: String,
-        required: [true, 'Please provide a password (hash)'],
+        required: [function(this: any) { return this.authProvider === 'local'; }, 'Please provide a password (hash)'],
         minlength: [8, 'Auth hash must be at least 8 characters'],
         select: false
     },

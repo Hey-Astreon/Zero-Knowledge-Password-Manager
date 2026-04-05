@@ -8,7 +8,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import api from '@/services/api';
 
-import { generateSalt, encodeBinary, deriveKey, encryptData } from '@/utils/crypto';
+import { generateSalt, encodeBinary, deriveKey, encryptData, deriveAuthHash } from '@/utils/crypto';
 
 const VERIFY_TOKEN_KEY = 'zk_verify_token';
 const VERIFY_PLAINTEXT = 'zk-pass-verified';
@@ -25,19 +25,22 @@ export default function Signup() {
         setError(null);
 
         try {
-            // Generate a unique salt for the ZK vault key derivation (PBKDF2)
+            // 1. Generate unique salt for vault key derivation (PBKDF2 for encryption)
             const salt = generateSalt();
             const saltBase64 = encodeBinary(salt.buffer as ArrayBuffer);
-            
-            // Store locally for immediate dashboard use
             localStorage.setItem('zk_vault_salt', saltBase64);
 
+            // 2. Derive authHash client-side — the server NEVER sees the raw master password
+            const authHash = await deriveAuthHash(formData.password, saltBase64);
+
+            // 3. Send authHash (not plaintext password) to server
             await api.post('/auth/signup', {
-                ...formData,
+                email: formData.email,
+                authHash,
                 vaultSalt: saltBase64
             });
 
-            // Derive the key and store a local verify token for future UnlockVault checks
+            // 4. Derive vault encryption key and store local unlock token
             const derivedKey = await deriveKey(formData.password, salt.buffer as ArrayBuffer);
             const localToken = await encryptData(
                 { verify: VERIFY_PLAINTEXT },
@@ -46,17 +49,17 @@ export default function Signup() {
             );
             localStorage.setItem(VERIFY_TOKEN_KEY, JSON.stringify(localToken));
 
-            // Also store an encrypted verify entry in the vault for cross-device support
+            // 5. Store an encrypted verify entry in the vault for cross-device support
             const encryptedPayload = await encryptData(
                 { verify: VERIFY_PLAINTEXT },
                 derivedKey,
                 salt.buffer as ArrayBuffer
             );
             await api.post('/vault', { ...encryptedPayload });
-            
+
             router.push('/dashboard');
         } catch (err: any) {
-            setError(err);
+            setError(typeof err === 'string' ? err : err?.message || 'Signup failed');
         } finally {
             setLoading(false);
         }

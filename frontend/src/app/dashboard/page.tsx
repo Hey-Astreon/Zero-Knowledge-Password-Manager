@@ -24,8 +24,8 @@ export default function Dashboard() {
 
     const filteredEntries = entries.filter(
         (entry) =>
-            entry.site.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            entry.username.toLowerCase().includes(searchQuery.toLowerCase())
+            (entry.site ?? '').toLowerCase().includes(searchQuery.toLowerCase()) ||
+            (entry.username ?? '').toLowerCase().includes(searchQuery.toLowerCase())
     );
 
     const handleLogout = async () => {

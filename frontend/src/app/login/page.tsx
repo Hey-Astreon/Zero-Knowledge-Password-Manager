@@ -7,7 +7,7 @@ import { Input } from '@/components/Input';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import api from '@/services/api';
-import { deriveKey, encryptData, decodeBinary } from '@/utils/crypto';
+import { deriveKey, encryptData, decodeBinary, deriveAuthHash } from '@/utils/crypto';
 
 const VERIFY_TOKEN_KEY = 'zk_verify_token';
 const VERIFY_PLAINTEXT = 'zk-pass-verified';
@@ -24,16 +24,27 @@ export default function Login() {
         setError(null);
 
         try {
-            const response = await api.post('/auth/login', formData);
-            const user = response.data.data.user;
-            
-            if (user.vaultSalt) {
-                localStorage.setItem('zk_vault_salt', user.vaultSalt);
+            // Step 1: Fetch the user's vaultSalt from the backend (public endpoint)
+            // This allows us to derive the authHash client-side without sending the raw password
+            const saltResponse = await api.get(`/auth/salt/${encodeURIComponent(formData.email)}`);
+            const vaultSalt: string = saltResponse.data.vaultSalt;
 
-                // Derive the encryption key and store a local verify token.
-                // This lets UnlockVault validate the password client-side (true ZK).
+            // Step 2: Derive authHash client-side using the retrieved salt
+            const authHash = await deriveAuthHash(formData.password, vaultSalt);
+
+            // Step 3: Log in with authHash — server NEVER sees the plaintext master password
+            const response = await api.post('/auth/login', {
+                email: formData.email,
+                authHash
+            });
+            const user = response.data.data.user;
+
+            // Step 4: Store vaultSalt and derive local verification token
+            if (vaultSalt) {
+                localStorage.setItem('zk_vault_salt', vaultSalt);
+
                 try {
-                    const saltBuffer = decodeBinary(user.vaultSalt);
+                    const saltBuffer = decodeBinary(vaultSalt);
                     const derivedKey = await deriveKey(formData.password, saltBuffer);
                     const token = await encryptData(
                         { verify: VERIFY_PLAINTEXT },
@@ -42,13 +53,13 @@ export default function Login() {
                     );
                     localStorage.setItem(VERIFY_TOKEN_KEY, JSON.stringify(token));
                 } catch {
-                    // Non-critical — user can still log in; token created next time
+                    // Non-critical — user can still log in
                 }
             }
-            
+
             router.push('/dashboard');
         } catch (err: any) {
-            setError(err);
+            setError(typeof err === 'string' ? err : err?.message || 'Login failed. Check your credentials.');
         } finally {
             setLoading(false);
         }
@@ -109,7 +120,12 @@ export default function Login() {
                     </div>
 
                     <div className="grid grid-cols-1 gap-4">
-                        <Button variant="secondary" className="w-full gap-3 border border-zinc-700 bg-transparent hover:bg-zinc-800">
+                        <Button 
+                            variant="secondary" 
+                            className="w-full gap-3 border border-zinc-700 bg-transparent hover:bg-zinc-800"
+                            onClick={() => alert('GitHub OAuth not configured yet.')}
+                            type="button"
+                        >
                             <Shield size={20} />
                             Continue with GitHub
                         </Button>
