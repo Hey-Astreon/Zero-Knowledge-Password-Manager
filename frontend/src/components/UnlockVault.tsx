@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { useCrypto } from './CryptoContext';
 import { Shield, Key, AlertCircle, Loader2 } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from './Button';
 import { Input } from './Input';
 import { encryptData, decryptData, decodeBinary } from '@/utils/crypto';
@@ -79,59 +80,77 @@ export const UnlockVault: React.FC = () => {
     };
 
     return (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/90 backdrop-blur-xl animate-in fade-in duration-500">
-            <div className="w-full max-w-md p-8 rounded-3xl border border-zinc-800 bg-zinc-950/50 shadow-2xl space-y-8 text-center">
-                <div className="mx-auto w-16 h-16 rounded-2xl bg-indigo-600 flex items-center justify-center shadow-lg shadow-indigo-500/20">
-                    <Shield size={32} className="text-white" />
-                </div>
-
-                <div className="space-y-2">
-                    <h2 className="text-2xl font-bold text-white tracking-tight">Unlock Your Vault</h2>
-                    <p className="text-sm text-zinc-400">
-                        Enter your master password to derive the encryption key and access your data.
-                    </p>
-                </div>
-
-                <form onSubmit={handleUnlock} className="space-y-4 text-left">
-                    <Input
-                        label="Master Password"
-                        type="password"
-                        placeholder="••••••••••••"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        icon={<Key size={18} />}
-                        className="bg-black border-zinc-800"
-                        autoFocus
-                    />
-
-                    {error && (
-                        <div className="flex items-center gap-2 text-xs text-rose-500 bg-rose-500/10 p-3 rounded-lg border border-rose-500/20 animate-in shake duration-300">
-                            <AlertCircle size={14} />
-                            {error}
-                        </div>
-                    )}
-
-                    <Button
-                        type="submit"
-                        variant="primary"
-                        className="w-full h-12 shadow-indigo-500/20"
-                        disabled={isUnlocking}
+        <AnimatePresence>
+            {!key && (
+                <motion.div 
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    className="fixed inset-0 z-[100] flex items-center justify-center bg-background/90 backdrop-blur-2xl"
+                >
+                    <motion.div 
+                        initial={{ scale: 0.95, y: 10 }}
+                        animate={{ scale: 1, y: 0 }}
+                        className="w-full max-w-md p-8 rounded-3xl glass-panel space-y-8 text-center relative overflow-hidden"
                     >
-                        {isUnlocking ? (
-                            <><Loader2 className="animate-spin mr-2" size={18} /> Deriving Master Key...</>
-                        ) : (
-                            'Unlock Vault'
-                        )}
-                    </Button>
-                </form>
+                        {/* Background glowing orb */}
+                        <div className="absolute top-0 right-0 p-32 bg-primary/10 blur-[100px] pointer-events-none rounded-full" />
 
-                <div className="pt-4 border-t border-zinc-900">
-                    <p className="text-[10px] text-zinc-500 uppercase tracking-widest leading-relaxed">
-                        Zero Knowledge Architecture<br/>
-                        <span className="text-indigo-400/60">Your key never leaves your device</span>
-                    </p>
-                </div>
-            </div>
-        </div>
+                        <div className="mx-auto w-16 h-16 rounded-2xl bg-gradient-premium neon-glow flex items-center justify-center relative z-10">
+                            <Shield size={32} className="text-white" />
+                        </div>
+
+                        <div className="space-y-2 relative z-10">
+                            <h2 className="text-3xl font-extrabold text-white tracking-tight">Alyra Vault</h2>
+                            <p className="text-sm text-text-secondary">
+                                Enter your master password to decrypt your local vault.
+                            </p>
+                        </div>
+
+                        <form onSubmit={handleUnlock} className="space-y-4 text-left relative z-10">
+                            <Input
+                                label="Master Password"
+                                type="password"
+                                placeholder="••••••••••••"
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                                icon={<Key size={18} />}
+                                autoFocus
+                            />
+
+                            {error && (
+                                <motion.div 
+                                    initial={{ opacity: 0, x: -10 }} 
+                                    animate={{ opacity: 1, x: 0 }}
+                                    className="flex items-center gap-2 text-xs text-red-500 bg-red-500/10 p-3 rounded-lg border border-red-500/20"
+                                >
+                                    <AlertCircle size={14} />
+                                    {error}
+                                </motion.div>
+                            )}
+                            <Button
+                                type="submit"
+                                variant="primary"
+                                className="w-full h-14"
+                                disabled={isUnlocking}
+                            >
+                                {isUnlocking ? (
+                                    <><Loader2 className="animate-spin mr-2" size={18} /> Decrypting...</>
+                                ) : (
+                                    'Unlock Vault'
+                                )}
+                            </Button>
+                        </form>
+
+                        <div className="pt-6 border-t border-white/10 relative z-10">
+                            <p className="text-[10px] text-zinc-500 uppercase tracking-widest leading-relaxed">
+                                Zero Knowledge Architecture<br/>
+                                <span className="text-accent/60">Decryption happens on this device</span>
+                            </p>
+                        </div>
+                    </motion.div>
+                </motion.div>
+            )}
+        </AnimatePresence>
     );
 };

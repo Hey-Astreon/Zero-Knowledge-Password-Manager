@@ -13,6 +13,7 @@ import { useCrypto } from '@/components/CryptoContext';
 import { UnlockVault } from '@/components/UnlockVault';
 import { SecurityDashboard } from '@/components/SecurityDashboard';
 import { LayoutDashboard, Zap, Eye, EyeOff, PlayCircle, ShieldCheck } from 'lucide-react';
+import { motion } from 'framer-motion';
 
 export default function Dashboard() {
     const { key, isLocked, stealthMode, setStealthMode } = useCrypto();
@@ -38,26 +39,26 @@ export default function Dashboard() {
     };
 
     return (
-        <div className="min-h-screen bg-black text-zinc-100 flex flex-col font-sans">
+        <div className="min-h-screen bg-background text-foreground flex flex-col font-sans">
             {/* Header / Nav */}
-            <header className="sticky top-0 z-40 w-full border-b border-zinc-800 bg-black/80 backdrop-blur-md px-6 py-4 flex items-center justify-between">
+            <header className="sticky top-0 z-40 w-full border-b border-white/10 bg-surface/80 backdrop-blur-2xl px-6 py-4 flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-xl bg-indigo-600 flex items-center justify-center shadow-lg shadow-indigo-500/20">
+                    <div className="w-10 h-10 rounded-xl bg-gradient-premium neon-glow flex items-center justify-center">
                         <Shield size={24} className="text-white" />
                     </div>
                     <div>
-                        <h1 className="text-xl font-bold tracking-tight">ZK-Pass</h1>
-                        <p className="text-[10px] text-zinc-500 font-mono tracking-widest uppercase">Zero Knowledge Vault</p>
+                        <h1 className="text-xl font-bold tracking-tight">Alyra Lock</h1>
+                        <p className="text-[10px] text-text-secondary font-mono tracking-widest uppercase">Zero Knowledge Password Security</p>
                     </div>
                 </div>
 
                 <div className="flex items-center gap-4">
                     {/* Security Health Badge */}
                     {!loading && !isLocked && (
-                        <div className={`hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full border bg-zinc-950 transition-all duration-700 ${
-                            vaultScore > 80 ? 'border-emerald-500/20 text-emerald-500 animate-pulse-glow' :
+                        <div className={`hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full border bg-surface transition-all duration-700 ${
+                            vaultScore > 80 ? 'border-secondary/30 text-secondary neon-glow-hover' :
                             vaultScore > 50 ? 'border-amber-500/20 text-amber-500' :
-                            'border-rose-500/20 text-rose-500'
+                            'border-primary/20 text-primary'
                         }`}>
                             <Zap size={14} className="fill-current" />
                             <span className="text-[10px] font-bold uppercase tracking-widest">{vaultScore}% Healthy</span>
@@ -66,8 +67,8 @@ export default function Dashboard() {
 
                     {/* Active Guard Pulse */}
                     {!loading && !isLocked && (
-                        <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-indigo-500/10 bg-zinc-950 text-indigo-400">
-                            <div className="w-1.5 h-1.5 rounded-full bg-indigo-500 animate-pulse ring-4 ring-indigo-500/20" />
+                        <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-primary/20 bg-surface text-primary">
+                            <div className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse ring-4 ring-primary/20" />
                             <span className="text-[10px] font-bold uppercase tracking-widest">Active Guard</span>
                         </div>
                     )}
@@ -82,7 +83,7 @@ export default function Dashboard() {
             <div className="flex-1 flex max-w-7xl mx-auto w-full px-6 py-8 gap-8">
                 {/* Sidebar */}
                 <aside className="w-64 hidden md:flex flex-col gap-2">
-                    <Button variant="primary" className="mb-6 h-12 justify-start gap-3 shadow-indigo-500/40" onClick={() => setIsModalOpen(true)}>
+                    <Button variant="primary" className="mb-6 h-12 justify-start gap-3 shadow-primary/40 neon-glow" onClick={() => setIsModalOpen(true)}>
                         <Plus size={20} />
                         Add New Entry
                     </Button>
@@ -90,15 +91,15 @@ export default function Dashboard() {
                     <nav className="space-y-1">
                         <Button 
                             variant="ghost" 
-                            className={`w-full justify-start gap-4 ${viewMode === 'all' ? 'text-zinc-100 bg-zinc-800/50' : 'text-zinc-400 hover:text-zinc-100'}`}
+                            className={`w-full justify-start gap-4 ${viewMode === 'all' ? 'text-white glass-panel' : 'text-text-secondary hover:text-white'}`}
                             onClick={() => setViewMode('all')}
                         >
-                            <Key size={18} className={viewMode === 'all' ? "text-indigo-400" : ""} />
+                            <Key size={18} className={viewMode === 'all' ? "text-primary" : ""} />
                             All Items
                         </Button>
                         <Button 
                             variant="ghost" 
-                            className={`w-full justify-start gap-4 ${viewMode === 'security' ? 'text-zinc-100 bg-zinc-800/50' : 'text-zinc-400 hover:text-zinc-100'}`}
+                            className={`w-full justify-start gap-4 ${viewMode === 'security' ? 'text-white glass-panel' : 'text-text-secondary hover:text-white'}`}
                             onClick={() => setViewMode('security')}
                         >
                             <Zap size={18} className={viewMode === 'security' ? "text-amber-400" : ""} />
@@ -110,14 +111,14 @@ export default function Dashboard() {
                         </Button>
                     </nav>
 
-                    <div className="mt-12 p-4 rounded-2xl bg-gradient-to-br from-indigo-500/10 to-transparent border border-indigo-500/10">
+                    <div className="mt-12 p-4 rounded-2xl bg-gradient-to-br from-primary/10 to-transparent border border-primary/20">
                         <div className="flex justify-between items-center mb-2">
-                            <p className="text-xs font-semibold text-indigo-400 uppercase tracking-widest">Vault Status</p>
-                            <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                            <p className="text-xs font-semibold text-primary uppercase tracking-widest">Vault Status</p>
+                            <div className="w-2 h-2 rounded-full bg-secondary animate-pulse" />
                         </div>
-                        <p className="text-[10px] text-zinc-400 mb-2">Phase 1 Audit: <span className="text-emerald-500">READY</span></p>
-                        <div className="h-1.5 w-full bg-zinc-800 rounded-full overflow-hidden">
-                            <div className="h-full w-[100%] bg-emerald-500 transition-all duration-1000" />
+                        <p className="text-[10px] text-text-secondary mb-2">Phase 1 Audit: <span className="text-secondary">READY</span></p>
+                        <div className="h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
+                            <div className="h-full w-[100%] bg-secondary transition-all duration-1000" />
                         </div>
                         <p className="text-[10px] text-zinc-500 mt-2">Zero-Knowledge Prep: 100%</p>
                     </div>
@@ -183,26 +184,31 @@ export default function Dashboard() {
                                 <VaultCard key={entry._id} entry={entry} onDelete={deleteEntry} />
                             ))
                         ) : (
-                            <div className="col-span-full py-32 flex flex-col items-center justify-center text-center space-y-6 animate-slide-up">
+                            <motion.div 
+                                initial={{ opacity: 0, scale: 0.95 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                className="col-span-full py-32 flex flex-col items-center justify-center text-center space-y-8"
+                            >
                                 <div className="relative">
-                                    <div className="absolute inset-0 bg-indigo-500/20 blur-3xl rounded-full" />
-                                    <div className="relative w-24 h-24 rounded-3xl bg-zinc-900 border border-zinc-800 flex items-center justify-center text-zinc-700 shadow-2xl">
-                                        <Shield size={48} className="text-zinc-800" />
-                                        <Lock size={24} className="absolute text-indigo-500" />
-                                    </div>
+                                    <div className="absolute inset-0 bg-primary/20 blur-3xl rounded-full" />
+                                    <motion.div 
+                                        className="relative w-28 h-28 rounded-[2rem] glass-panel flex items-center justify-center text-zinc-700 shadow-2xl animate-pulse-glow"
+                                    >
+                                        <Shield size={56} className="text-white/5" />
+                                        <Lock size={28} className="absolute text-primary mix-blend-screen" />
+                                    </motion.div>
                                 </div>
-                                <div className="space-y-2 relative">
-                                    <h3 className="text-2xl font-bold text-zinc-100 tracking-tight">Your vault is empty</h3>
-                                    <p className="text-zinc-500 text-sm max-w-xs mx-auto leading-relaxed">
-                                        Securely store and manage your passwords with zero-knowledge encryption. 
-                                        Start by adding your first entry.
+                                <div className="space-y-3 relative z-10">
+                                    <h3 className="text-3xl font-extrabold text-white tracking-tight text-gradient">Your vault is empty</h3>
+                                    <p className="text-text-secondary text-base max-w-sm mx-auto leading-relaxed">
+                                        Securely store and manage your passwords with military-grade zero-knowledge encryption. 
                                     </p>
                                 </div>
-                                <Button variant="primary" size="md" onClick={() => setIsModalOpen(true)} className="px-8 shadow-indigo-500/20">
-                                    <Plus size={18} className="mr-2" />
-                                    Create My First Entry
+                                <Button variant="primary" size="lg" onClick={() => setIsModalOpen(true)} className="px-10">
+                                    <Plus size={20} className="mr-2" />
+                                    Protect First Password
                                 </Button>
-                            </div>
+                            </motion.div>
                         )}
                     </div>
                 </main>

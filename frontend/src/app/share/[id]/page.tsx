@@ -53,7 +53,7 @@ export default function SharePage() {
                         <Shield size={32} />
                     </div>
                     <div>
-                        <h1 className="text-2xl font-bold tracking-tight">ZK-Pass Secure Share</h1>
+                        <h1 className="text-2xl font-bold tracking-tight">Alyra Lock Secure Share</h1>
                         <p className="text-zinc-500 text-sm mt-1 uppercase tracking-widest font-mono text-[10px]">Zero-Knowledge Encrypted</p>
                     </div>
                 </div>
@@ -106,7 +106,7 @@ export default function SharePage() {
 
                 <div className="pt-4 text-center">
                     <a href="/" className="text-zinc-600 hover:text-zinc-400 text-xs transition-colors underline-offset-4 underline">
-                        Protect your own passwords with ZK-Pass →
+                        Protect your own passwords with Alyra Lock →
                     </a>
                 </div>
             </div>

@@ -1,45 +1,50 @@
-@import "tailwindcss";
-
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+@import "tailwindcss/index.css";
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
+  --color-background: #050507;
+  --color-foreground: #ffffff;
+  --color-surface: #0E0E12;
+  --color-primary: #FF2E63;
+  --color-secondary: #D100FF;
+  --color-accent: #FF4D8D;
+  --color-text-secondary: #A1A1AA;
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
 body {
-  background: #000;
-  color: #ededed;
+  background: var(--color-background);
+  color: var(--color-foreground);
+  overflow-x: hidden;
 }
 
 @layer base {
   .glass-panel {
-    @apply bg-zinc-950/50 backdrop-blur-xl border border-zinc-900/50 shadow-2xl;
+    @apply bg-surface/60 backdrop-blur-2xl border border-white/10 shadow-2xl;
   }
   
-  @keyframes slideUp {
-    from { transform: translateY(12px); opacity: 0; }
-    to { transform: translateY(0); opacity: 1; }
+  .neon-glow {
+    box-shadow: 0 0 20px 2px rgba(255, 46, 99, 0.3);
+  }
+
+  .neon-glow-hover:hover {
+    box-shadow: 0 0 30px 5px rgba(209, 0, 255, 0.4);
+  }
+
+  .text-gradient {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary;
+  }
+
+  .bg-gradient-premium {
+    @apply bg-gradient-to-r from-primary hover:from-accent to-secondary transition-all;
   }
 
   @keyframes pulse-glow {
-    0%, 100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); opacity: 1; }
-    50% { box-shadow: 0 0 12px 4px rgba(16, 185, 129, 0.4); opacity: 0.9; }
+    0%, 100% { box-shadow: 0 0 0 0 rgba(255, 46, 99, 0); opacity: 1; }
+    50% { box-shadow: 0 0 30px 10px rgba(255, 46, 99, 0.5); opacity: 0.9; }
   }
 
   .animate-pulse-glow {
-    animation: pulse-glow 2s infinite ease-in-out;
+    animation: pulse-glow 3s infinite ease-in-out;
   }
 }

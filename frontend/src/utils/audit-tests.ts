@@ -5,14 +5,14 @@ async function runAuditTests() {
 
     const password = 'MasterPassword123!';
     const salt = generateSalt();
-    const key = await deriveKey(password, salt);
+    const key = await deriveKey(password, salt.buffer as ArrayBuffer);
 
     /**
      * Test 1: Bit-Flipping Integrity (Tampering detection)
      */
     console.log('\n[Audit] Test 1: Bit-Flipping detection...');
     const sample = { secret: 'Confidential' };
-    const payload = await encryptData(sample, key, salt);
+    const payload = await encryptData(sample, key, salt.buffer as ArrayBuffer);
     
     // Attempt to tamper with ciphertext
     const rawData = atob(payload.encryptedData);
@@ -32,7 +32,7 @@ async function runAuditTests() {
         data: 'A'.repeat(1024 * 1024)
     };
     try {
-        const largePayload = await encryptData(largeData, key, salt);
+        const largePayload = await encryptData(largeData, key, salt.buffer as ArrayBuffer);
         const restored = await decryptData(largePayload, key);
         if (restored.data.length === largeData.data.length) {
             console.log('✅ Success: 1MB Buffer handled without stack overflow.');
@@ -48,7 +48,7 @@ async function runAuditTests() {
      */
     console.log('\n[Audit] Test 3: Unicode and Emojis...');
     const unicodeData = { emoji: '🔒🔑🕵️‍♂️', characters: 'ñ, ö, ç, 漢字' };
-    const uniPayload = await encryptData(unicodeData, key, salt);
+    const uniPayload = await encryptData(unicodeData, key, salt.buffer as ArrayBuffer);
     const decodedUni = await decryptData(uniPayload, key);
     if (decodedUni.emoji === unicodeData.emoji) {
         console.log('✅ Success: Unicode integrity preserved.');
@@ -61,7 +61,7 @@ async function runAuditTests() {
      */
     console.log('\n[Audit] Test 4: Negative testing (Empty fields)...');
     try {
-        await deriveKey('', salt);
+        await deriveKey('', salt.buffer as ArrayBuffer);
         console.error('❌ Failure: Empty password allowed.');
     } catch (e) {
         console.log('✅ Success: Empty password rejected.');

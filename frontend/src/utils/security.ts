@@ -1,5 +1,5 @@
 /**
- * ZK-Pass Security Intelligence Utility
+ * Alyra Lock Security Intelligence Utility
  * Purpose: Securely analyze password strength and breach status.
  * Standard: HIBP k-Anonymity for Breach Detection (Zero-Knowledge safe).
  */

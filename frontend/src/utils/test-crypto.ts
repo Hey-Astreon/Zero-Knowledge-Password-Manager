@@ -13,21 +13,21 @@ async function runTest() {
 
     console.log('1. Generating random 16-byte salt...');
     const salt = generateSalt();
-    console.log(`   Salt (Base64): ${encodeBinary(salt)}`);
+    console.log(`   Salt (Base64): ${encodeBinary(salt.buffer as ArrayBuffer)}`);
 
     console.log('2. Deriving 256-bit AES key (PBKDF2 600k iterations)...');
     const startKey = performance.now();
-    const key = await deriveKey(password, salt);
+    const key = await deriveKey(password, salt.buffer as ArrayBuffer);
     const endKey = performance.now();
     console.log(`   Key derivation took: ${(endKey - startKey).toFixed(2)}ms`);
 
     console.log('3. Encrypting sample data with AES-GCM...');
-    const payload = await encryptData(testData, key);
+    const payload = await encryptData(testData, key, salt.buffer as ArrayBuffer);
     console.log(`   IV (Base64): ${payload.iv}`);
     console.log(`   Ciphertext: ${payload.encryptedData}`);
 
     console.log('4. Decrypting payload...');
-    const decryptedData = await decryptData(payload.encryptedData, payload.iv, key);
+    const decryptedData = await decryptData(payload, key);
     
     console.log('5. Verifying integrity...');
     if (JSON.stringify(testData) === JSON.stringify(decryptedData)) {
@@ -39,8 +39,8 @@ async function runTest() {
     // Test Failure Case
     console.log('6. Testing incorrect key scenario...');
     try {
-        const wrongKey = await deriveKey('WrongPassword', salt);
-        await decryptData(payload.encryptedData, payload.iv, wrongKey);
+        const wrongKey = await deriveKey('WrongPassword', salt.buffer as ArrayBuffer);
+        await decryptData(payload, wrongKey);
     } catch (error: any) {
         console.log(`✅ Success: Caught expected error on wrong password: ${error.message}`);
     }

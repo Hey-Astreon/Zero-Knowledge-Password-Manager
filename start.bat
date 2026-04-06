@@ -1,27 +1,27 @@
 @echo off
-title ZK-Pass Launcher
+title Alyra Lock Launcher
 
 echo ==========================================
-echo   Zero Knowledge Password Manager
+echo   Alyra Lock Launcher
 echo ==========================================
 echo.
 
-echo [1/3] Starting MongoDB...
-start "MongoDB" cmd /k "mongod --dbpath C:\data\db"
-timeout /t 3 /nobreak >nul
-
-echo [2/3] Starting Backend (Express)...
-start "ZK-Pass Backend" cmd /k "cd /d "e:\Zero knowledge pass system\backend" && npm run dev"
+echo [1/2] Starting Backend (Express)...
+start "Alyra Lock Backend" cmd /k "cd /d "%~dp0backend" && npm.cmd run dev"
 timeout /t 2 /nobreak >nul
 
-echo [3/3] Starting Frontend (Next.js)...
-start "ZK-Pass Frontend" cmd /k "cd /d "e:\Zero knowledge pass system\frontend" && npm run dev"
+echo [2/2] Starting Frontend (Next.js)...
+start "Alyra Lock Frontend" cmd /k "cd /d "%~dp0frontend" && npm.cmd run dev"
 
 echo.
 echo ==========================================
 echo   All services launched!
 echo   Frontend: http://localhost:3000
 echo   Backend:  http://localhost:5000
+echo.
+echo   Note: If the frontend has styling issues, 
+echo   please ensure your terminal is running in 
+echo   the project root and not a subfolder.
 echo ==========================================
 echo.
 echo Press any key to close this launcher...

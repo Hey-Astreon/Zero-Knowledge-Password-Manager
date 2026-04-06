@@ -1,5 +1,5 @@
 /**
- * ZK-Pass Cryptography Module (Hardened & Audited)
+ * Alyra Lock Cryptography Module (Hardened & Audited)
  * Algorithm: AES-256-GCM
  * Key Derivation: PBKDF2-HMAC-SHA256 (600,000 iterations)
  * 🔬 Security Audit: v1.1 - Passed

@@ -6,6 +6,7 @@ import { Button } from '@/components/Button';
 import { Input } from '@/components/Input';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { motion } from 'framer-motion';
 import api from '@/services/api';
 import { deriveKey, encryptData, decodeBinary, deriveAuthHash } from '@/utils/crypto';
 
@@ -66,21 +67,29 @@ export default function Login() {
     };
 
     return (
-        <div className="min-h-screen bg-black flex flex-col items-center justify-center p-6 bg-[url('https://www.transparenttextures.com/patterns/dark-matter.png')]">
-            <div className="w-full max-w-md space-y-8">
+        <div className="min-h-screen bg-background flex flex-col items-center justify-center p-6 relative overflow-hidden">
+            {/* Background Orbs */}
+            <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-primary/10 blur-[150px] rounded-full pointer-events-none" />
+            <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-secondary/10 blur-[150px] rounded-full pointer-events-none" />
+
+            <motion.div 
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="w-full max-w-md space-y-8 relative z-10"
+            >
                 {/* Logo & Header */}
                 <div className="text-center space-y-4">
-                    <div className="inline-flex w-16 h-16 rounded-2xl bg-indigo-600 items-center justify-center shadow-2xl shadow-indigo-600/40 animate-bounce-slow">
+                    <div className="inline-flex w-16 h-16 rounded-2xl bg-gradient-premium neon-glow items-center justify-center">
                         <Shield size={32} className="text-white" />
                     </div>
                     <div className="space-y-1">
-                        <h1 className="text-3xl font-extrabold text-zinc-100 tracking-tight">Welcome back</h1>
-                        <p className="text-zinc-500 text-sm">Unlock your secure vault.</p>
+                        <h1 className="text-3xl font-extrabold text-white tracking-tight">Welcome back</h1>
+                        <p className="text-text-secondary text-sm">Unlock your secure vault.</p>
                     </div>
                 </div>
 
                 {/* Card */}
-                <div className="bg-zinc-900/50 border border-zinc-800 p-8 rounded-3xl shadow-3xl backdrop-blur-xl">
+                <div className="glass-panel p-8 rounded-[2rem]">
                     <form onSubmit={handleSubmit} className="space-y-5">
                         <Input
                             label="Email Address"
@@ -112,17 +121,17 @@ export default function Login() {
 
                     <div className="relative my-8">
                         <div className="absolute inset-0 flex items-center">
-                            <span className="w-full border-t border-zinc-800"></span>
+                            <span className="w-full border-t border-white/10"></span>
                         </div>
                         <div className="relative flex justify-center text-xs uppercase">
-                            <span className="bg-zinc-900 px-2 text-zinc-500">Or continue with</span>
+                            <span className="bg-surface px-2 text-text-secondary rounded-full border border-white/5">Or continue with</span>
                         </div>
                     </div>
 
                     <div className="grid grid-cols-1 gap-4">
                         <Button 
                             variant="secondary" 
-                            className="w-full gap-3 border border-zinc-700 bg-transparent hover:bg-zinc-800"
+                            className="w-full gap-3"
                             onClick={() => alert('GitHub OAuth not configured yet.')}
                             type="button"
                         >
@@ -132,13 +141,13 @@ export default function Login() {
                     </div>
                 </div>
 
-                <p className="text-center text-zinc-500 text-sm">
+                <p className="text-center text-text-secondary text-sm">
                     Don&rsquo;t have a vault yet?{' '}
-                    <Link href="/signup" className="text-indigo-400 hover:text-indigo-300 font-semibold transition-colors">
+                    <Link href="/signup" className="text-primary hover:text-accent font-bold transition-colors">
                         Create one now
                     </Link>
                 </p>
-            </div>
+            </motion.div>
         </div>
     );
 }
