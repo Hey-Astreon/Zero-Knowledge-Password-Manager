@@ -1,61 +1,56 @@
-# 🚀 Ultimate Deployment Guide (Vercel + Render + MongoDB Atlas)
+# 🚢 Alyra Lock Deployment Blueprint
 
-Since you want to go the professional route, this guide will walk you through deploying **Alyra Lock** using the industry-standard "Free Mode" stack.
+This guide provides a professional "Best Practices" path to deploy **Alyra Lock** in a secure, scalable production environment using specialized cloud providers (Vercel, Render, and MongoDB Atlas).
 
----
+## Phase 1: Database (MongoDB Atlas)
+Never use local MongoDB for production. Move to the cloud:
+1.  Create a free account at [MongoDB Atlas](https://www.mongodb.com/cloud/atlas).
+2.  Deploy a free "Shared Cluster".
+3.  **Network Access**: Add `0.0.0.0/0` (Allow all IP access) for ease of deployment.
+4.  **Database Access**: Create a user with a secure password.
+5.  **Connection String**: Copy the SRV string (e.g., `mongodb+srv://user:pass@cluster.mongodb.net/alyra_lock`).
 
-### Phase 1: The Database (MongoDB Atlas)
-1.  Go to [MongoDB Atlas](https://www.mongodb.com/cloud/atlas) and sign up for a **Free Shared Cluster**.
-2.  Once your cluster is created, click **"Connect"**.
-3.  Choose **"Drivers"** and copy the **Connection String** (something like `mongodb+srv://<db_username>:<db_password>@cluster0.abc.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`).
-4.  **Important**: Keep your `db_username` and `db_password` nearby.
-
----
-
-### Phase 2: The Backend (Render.com)
-1.  Go to [Render.com](https://render.com) and create a free account.
-2.  Click **"New"** → **"Web Service"**.
-3.  Connect your GitHub repository.
-4.  **Settings**:
-    -   **Name**: `alyra-lock-backend`
+## Phase 2: Backend (Render.com)
+The backend requires a server that supports long-running Node.js processes.
+1.  Connect your GitHub repository to [Render.com](https://render.com).
+2.  Choose **"Web Service"**.
+3.  **Settings**:
     -   **Root Directory**: `backend`
-    -   **Runtime**: `Node`
     -   **Build Command**: `npm install && npm run build`
     -   **Start Command**: `npm run start`
-5.  **Environment Variables** (Add these one by one):
-    -   `MONGO_URI`: (Your Atlas string from Phase 1)
-    -   `JWT_SECRET`: (Any long random string, e.g., `SuperSecret123!`)
+4.  **Environment Variables**:
     -   `NODE_ENV`: `production`
-    -   `CLIENT_URL`: `https://alyra-lock-frontend.vercel.app` (You will update this later with your actual Vercel link)
-6.  Click **"Create Web Service"**.
+    -   `PORT`: `10000` (Render's default)
+    -   `MONGO_URI`: (Your Atlas SRV string)
+    -   `JWT_SECRET`: (Generate a long, random string)
+    -   `CLIENT_URL`: (Your Vercel URL, set *after* Phase 3)
 
----
-
-### Phase 3: The Frontend (Vercel)
-1.  Go to [Vercel](https://vercel.com) and sign in with GitHub.
-2.  Click **"Add New"** → **"Project"**.
-3.  Import your repository.
-4.  **Settings**:
-    -   **Framework Preset**: `Next.js`
+## Phase 3: Frontend (Vercel)
+Vercel is the native home for Next.js and ensures maximum performance.
+1.  Connect your GitHub repository to [Vercel](https://vercel.com).
+2.  **Settings**:
     -   **Root Directory**: `frontend`
-5.  **Environment Variables**:
-    -   `NEXT_PUBLIC_API_URL`: (The URL Render gives you, ended with `/api`) e.g., `https://alyra-lock-backend.onrender.com/api`
-6.  Click **"Deploy"**.
+    -   **Framework Preset**: Next.js
+3.  **Environment Variables**:
+    -   `NEXT_PUBLIC_API_URL`: (Render URL + `/api`) e.g., `https://alyra-backend.onrender.com/api`
 
----
-
-### 🖇️ Final "Link Up" Step
-Once Vercel gives you your final frontend URL (e.g., `https://alyra-lock-123.vercel.app`):
+## Phase 4: Final Connection (CORS)
+Once Vercel gives you a production domain (e.g., `alyra-lock.vercel.app`):
 1.  Go back to **Render** Settings.
-2.  Update the `CLIENT_URL` environment variable to this exact Vercel link.
-3.  This is required so the backend allows your frontend to "talk" to it (CORS).
+2.  Update the `CLIENT_URL` to your Vercel address.
+3.  The backend will automatically redeploy and allow calls from your frontend.
 
 ---
 
-### ⚠️ Common Beginner Mistakes
--   **Wrong Password**: In the Atlas connection string, replace `<db_password>` (including the brackets) with your actual password.
--   **Missing /api**: In the frontend's `NEXT_PUBLIC_API_URL`, forget to add `/api` at the end of your Render link.
--   **Network Access**: In MongoDB Atlas, ensure you set "IP Access List" to `0.0.0.0/0` (Allow Access from Anywhere) so Render can connect to your DB!
--   **Root Directory**: Make sure you tell Vercel and Render about the `frontend` and `backend` subfolders!
+### Deployment Checklist (Security)
+-   [ ]   **No Plaintext**: Ensure `backend/src/config/db.ts` uses `process.env.MONGO_URI` (I have updated this for you).
+-   [ ]   **Rate Limiting**: The backend already includes an API limiter to prevent brute-force attacks.
+-   [ ]   **Secure Cookies**: Ensure `withCredentials: true` is maintained for ZK-Auth handling.
+-   [ ]   **HTTPS**: Both Render and Vercel will provide SSL/HTTPS automatically.
 
-You're all set! Follow these steps and your app will be online globally in minutes!
+---
+
+### Alternative: Single-Server (Docker)
+If you have a Linux VPS (DigitalOcean/Linode):
+1.  Install **Docker** and **Docker Compose**.
+2.  Use a `docker-compose.yml` logic to manage services together.
