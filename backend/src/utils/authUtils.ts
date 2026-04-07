@@ -1,5 +1,5 @@
 import jwt from 'jsonwebtoken';
-import { Response } from 'express';
+import { Request, Response } from 'express';
 import User from '../models/User.js';
 import { AppError } from '../utils/AppError.js';
 
@@ -9,13 +9,13 @@ const signToken = (id: string) => {
     });
 };
 
-export const createSendToken = (user: any, statusCode: number, res: Response) => {
+export const createSendToken = (user: any, statusCode: number, req: Request, res: Response) => {
     const token = signToken(user._id);
     const cookieOptions = {
         expires: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000),
         httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'strict' as const // TypeScript type assertion
+        secure: process.env.NODE_ENV === 'production' || req.headers['x-forwarded-proto'] === 'https',
+        sameSite: 'none' as const
     };
 
     res.cookie('jwt', token, cookieOptions);

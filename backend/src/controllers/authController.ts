@@ -12,7 +12,7 @@ export const signup = async (req: Request, res: Response, next: NextFunction) =>
             vaultSalt: req.body.vaultSalt
         });
 
-        createSendToken(newUser, 201, res);
+        createSendToken(newUser, 201, req, res);
     } catch (err: any) {
         if (err.code === 11000) {
             return next(new AppError('Email already exists', 400));
@@ -62,7 +62,7 @@ export const login = async (req: Request, res: Response, next: NextFunction) => 
         }
 
         // 3) If everything ok, send token to client
-        createSendToken(user, 200, res);
+        createSendToken(user, 200, req, res);
     } catch (err) {
         next(err);
     }
@@ -71,7 +71,9 @@ export const login = async (req: Request, res: Response, next: NextFunction) => 
 export const logout = (req: Request, res: Response) => {
     res.cookie('jwt', 'loggedout', {
         expires: new Date(Date.now() + 10 * 1000),
-        httpOnly: true
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production' || req.headers['x-forwarded-proto'] === 'https',
+        sameSite: 'none'
     });
     res.status(200).json({ success: true, message: 'Logged out successfully' });
 };
@@ -138,7 +140,7 @@ export const oauthLogin = async (req: Request, res: Response, next: NextFunction
         }
 
         // 4. Send standard token and set cookie directly!
-        createSendToken(user, 200, res);
+        createSendToken(user, 200, req, res);
 
     } catch (err) {
         next(err);
