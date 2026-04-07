@@ -85,7 +85,7 @@ app.use('/api/share', shareRouter);
 
 
 // 3. UNHANDLED ROUTES
-app.all('*', (req, res, next) => {
+app.all('{*path}', (req, res, next) => {
     next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));
 });
 
