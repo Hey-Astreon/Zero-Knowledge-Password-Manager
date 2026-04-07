@@ -84,9 +84,9 @@ app.use('/api/vault', vaultRouter);
 app.use('/api/share', shareRouter);
 
 
-// 3. UNHANDLED ROUTES
-app.all('{*path}', (req, res, next) => {
-    next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));
+// 3. UNHANDLED ROUTES - Global Catch-all (Express 5 safe)
+app.use((req, res) => {
+    res.status(404).json({ message: "Route not found" });
 });
 
 // 4. GLOBAL ERROR HANDLER
