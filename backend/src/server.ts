@@ -15,6 +15,15 @@ import authRouter from './routes/authRoutes.js';
 import vaultRouter from './routes/vaultRoutes.js';
 import shareRouter from './routes/shareRoutes.js';
 
+// Process-level safety: prevent server crashes from unhandled promise rejections or exceptions
+process.on('uncaughtException', (err) => {
+    console.error('UNCAUGHT EXCEPTION! 💥', err.name, err.message);
+});
+
+process.on('unhandledRejection', (err: any) => {
+    console.error('UNHANDLED REJECTION! 💥', err?.name || 'Error', err?.message || err);
+});
+
 // Connect to Database
 connectDB();
 
