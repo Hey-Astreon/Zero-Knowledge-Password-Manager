@@ -4,12 +4,15 @@
  * Standard: HIBP k-Anonymity for Breach Detection (Zero-Knowledge safe).
  */
 
+const strengthCache = new Map<string, { score: number; feedback: string }>();
+
 /**
  * Calculates a strength score from 0-4
  * Based on length, complexity, and common patterns.
  */
 export function analyzeStrength(password: string): { score: number; feedback: string } {
     if (!password) return { score: 0, feedback: 'Enter a password' };
+    if (strengthCache.has(password)) return strengthCache.get(password)!;
     
     let score = 0;
     
@@ -35,10 +38,14 @@ export function analyzeStrength(password: string): { score: number; feedback: st
         'Very Strong'
     ];
     
-    return {
+    const result = {
         score,
         feedback: feedbacks[score]
     };
+
+    if (strengthCache.size > 500) strengthCache.clear(); // Keep cache size bounded
+    strengthCache.set(password, result);
+    return result;
 }
 
 /**

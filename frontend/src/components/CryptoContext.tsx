@@ -81,14 +81,20 @@ export const CryptoProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     // Auto-lock on idle and visibility hardening.
     // Guards only run when a key is active (vault is unlocked).
     useEffect(() => {
+        if (!key) return; // Do not attach event listeners when vault is locked
+
         let idleTimeout: NodeJS.Timeout;
         let blurTimeout: NodeJS.Timeout;
+        let lastResetTime = Date.now();
 
         const resetTimer = () => {
+            const now = Date.now();
+            // Throttle timer reset to at most once every 5 seconds to reduce CPU churn
+            if (now - lastResetTime < 5000) return;
+            lastResetTime = now;
+
             clearTimeout(idleTimeout);
-            if (key) {
-                idleTimeout = setTimeout(lock, 15 * 60 * 1000); // 15 mins idle
-            }
+            idleTimeout = setTimeout(lock, 15 * 60 * 1000); // 15 mins idle
         };
 
         const handleVisibilityChange = () => {
@@ -111,6 +117,9 @@ export const CryptoProvider: React.FC<{ children: React.ReactNode }> = ({ childr
                 lock();
             }
         };
+
+        // Initial idle timer setup
+        idleTimeout = setTimeout(lock, 15 * 60 * 1000);
 
         window.addEventListener('mousemove', resetTimer);
         window.addEventListener('keydown', handleKeyDown);

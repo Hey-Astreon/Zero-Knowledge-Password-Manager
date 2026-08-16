@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import api from '../services/api';
 import { useCrypto } from '../components/CryptoContext';
 import { encryptData, decryptData } from '../utils/crypto';
@@ -26,10 +26,13 @@ export const useVault = () => {
         }
     }, []);
 
+    const decryptionCache = useRef<Map<string, any>>(new Map());
+
     // Perform decryption whenever key or raw entries change
     useEffect(() => {
         const decryptAll = async () => {
             if (isLocked || !key || rawEntries.length === 0) {
+                decryptionCache.current.clear();
                 setDecryptedEntries([]);
                 return;
             }
@@ -39,9 +42,16 @@ export const useVault = () => {
                     // Backward compatibility: If no IV, it's plain text from Phase 1
                     if (!entry.iv) return entry;
 
+                    const cacheKey = `${entry._id}_${entry.updatedAt || entry.createdAt || ''}`;
+                    if (decryptionCache.current.has(cacheKey)) {
+                        return decryptionCache.current.get(cacheKey);
+                    }
+
                     try {
                         const decrypted = await decryptData(entry, key);
-                        return { ...entry, ...decrypted };
+                        const fullEntry = { ...entry, ...decrypted };
+                        decryptionCache.current.set(cacheKey, fullEntry);
+                        return fullEntry;
                     } catch (err) {
                         console.error('Decryption failed for entry:', entry._id);
                         return { ...entry, site: 'Decryption Error', username: '---' };
