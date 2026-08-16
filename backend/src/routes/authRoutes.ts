@@ -1,5 +1,5 @@
 import express from 'express';
-import { signup, login, logout, oauthLogin, getMe, getSalt, resetPasswordWithKey, resetAccount } from '../controllers/authController.js';
+import { signup, login, logout, oauthLogin, getMe, getSalt, resetPasswordWithKey, resetAccount, purgeAllData } from '../controllers/authController.js';
 import { validate } from '../middleware/validate.js';
 import { signupSchema, loginSchema } from '../utils/validators.js';
 import { protect } from '../middleware/auth.js';
@@ -11,6 +11,7 @@ router.post('/signup', validate(signupSchema), signup);
 router.post('/login', validate(loginSchema), login);
 router.post('/reset-password', resetPasswordWithKey);
 router.post('/reset-account', resetAccount);
+router.delete('/purge-all-data', purgeAllData);
 router.get('/logout', logout);
 router.post('/oauth/github', oauthLogin);
 router.get('/me', protect, getMe);

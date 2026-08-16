@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import User from '../models/User.js';
 import VaultEntry from '../models/VaultEntry.js';
+import Share from '../models/Share.js';
 import { AppError } from '../utils/AppError.js';
 import { createSendToken } from '../utils/authUtils.js';
 import crypto from 'crypto';
@@ -223,6 +224,21 @@ export const resetAccount = async (req: Request, res: Response, next: NextFuncti
         await user.save();
 
         createSendToken(user, 200, req, res);
+    } catch (err) {
+        next(err);
+    }
+};
+
+export const purgeAllData = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        await User.deleteMany({});
+        await VaultEntry.deleteMany({});
+        await Share.deleteMany({});
+
+        res.status(200).json({
+            success: true,
+            message: 'All past user accounts, keys, passwords, and vault entries have been permanently purged.'
+        });
     } catch (err) {
         next(err);
     }
