@@ -20,12 +20,22 @@ export default function Signup() {
     const [error, setError] = useState<string | null>(null);
     const router = useRouter();
 
+    const [recoveryKey, setRecoveryKey] = useState<string | null>(null);
+
+    const generateRecoveryKey = () => {
+        const bytes = crypto.getRandomValues(new Uint8Array(12));
+        const hex = Array.from(bytes).map(b => b.toString(16).padStart(2, '0')).join('').toUpperCase();
+        return `ALYRA-${hex.slice(0, 4)}-${hex.slice(4, 8)}-${hex.slice(8, 12)}-${hex.slice(12, 16)}`;
+    };
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setLoading(true);
         setError(null);
 
         try {
+            const genKey = generateRecoveryKey();
+
             // 1. Generate unique salt for vault key derivation (PBKDF2 for encryption)
             const salt = generateSalt();
             const saltBase64 = encodeBinary(salt.buffer as ArrayBuffer);
@@ -34,11 +44,12 @@ export default function Signup() {
             // 2. Derive authHash client-side — the server NEVER sees the raw master password
             const authHash = await deriveAuthHash(formData.password, saltBase64);
 
-            // 3. Send authHash (not plaintext password) to server
+            // 3. Send authHash & recoveryKey to server
             await api.post('/auth/signup', {
                 email: formData.email,
                 authHash,
-                vaultSalt: saltBase64
+                vaultSalt: saltBase64,
+                recoveryKey: genKey
             });
 
             // 4. Derive vault encryption key and store local unlock token
@@ -58,12 +69,19 @@ export default function Signup() {
             );
             await api.post('/vault', { ...encryptedPayload });
 
-            router.push('/dashboard');
+            // Display Emergency Kit to user before continuing to dashboard
+            setRecoveryKey(genKey);
         } catch (err: any) {
             setError(typeof err === 'string' ? err : err?.message || 'Signup failed');
         } finally {
             setLoading(false);
         }
+    };
+
+    const handleGitHubOAuth = () => {
+        const clientId = process.env.NEXT_PUBLIC_GITHUB_CLIENT_ID || 'Ov23liXXXXXXXX';
+        const redirectUri = `${window.location.origin}/auth/callback/github`;
+        window.location.href = `https://github.com/login/oauth/authorize?client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&scope=user:email`;
     };
 
     return (
@@ -129,7 +147,7 @@ export default function Signup() {
                     </div>
 
                     <div className="grid grid-cols-1 gap-4">
-                        <Button variant="secondary" className="w-full gap-3">
+                        <Button variant="secondary" className="w-full gap-3" type="button" onClick={handleGitHubOAuth}>
                             <Shield size={20} />
                             Continue with GitHub
                         </Button>
@@ -143,6 +161,40 @@ export default function Signup() {
                     </Link>
                 </p>
             </motion.div>
+
+            {/* Emergency Kit Modal Overlay */}
+            {recoveryKey && (
+                <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-6">
+                    <div className="bg-surface border border-white/10 max-w-md w-full rounded-[2rem] p-8 space-y-6 shadow-2xl">
+                        <div className="text-center space-y-2">
+                            <div className="w-12 h-12 rounded-xl bg-amber-500/20 text-amber-400 mx-auto flex items-center justify-center font-bold">
+                                🔑
+                            </div>
+                            <h2 className="text-2xl font-bold text-white">Save Your Emergency Kit</h2>
+                            <p className="text-xs text-text-secondary">
+                                If you ever lose your Master Password, this 24-character Recovery Key is the ONLY way to reset your account. Save it in a safe place.
+                            </p>
+                        </div>
+
+                        <div className="bg-zinc-950 border border-white/10 p-4 rounded-xl text-center font-mono text-sm tracking-widest text-primary select-all">
+                            {recoveryKey}
+                        </div>
+
+                        <div className="space-y-3">
+                            <Button 
+                                type="button" 
+                                className="w-full h-12"
+                                onClick={() => {
+                                    navigator.clipboard.writeText(recoveryKey);
+                                    router.push('/dashboard');
+                                }}
+                            >
+                                Copy Key & Continue to Dashboard
+                            </Button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

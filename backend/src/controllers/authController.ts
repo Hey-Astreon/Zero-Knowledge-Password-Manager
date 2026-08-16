@@ -1,15 +1,23 @@
 import { Request, Response, NextFunction } from 'express';
 import User from '../models/User.js';
+import VaultEntry from '../models/VaultEntry.js';
 import { AppError } from '../utils/AppError.js';
 import { createSendToken } from '../utils/authUtils.js';
 import crypto from 'crypto';
+import bcrypt from 'bcryptjs';
 
 export const signup = async (req: Request, res: Response, next: NextFunction) => {
     try {
+        let recoveryHash;
+        if (req.body.recoveryKey) {
+            recoveryHash = await bcrypt.hash(req.body.recoveryKey, 12);
+        }
+
         const newUser = await User.create({
             email: req.body.email,
             password: req.body.authHash || req.body.password, // accept authHash (ZK) or legacy password
-            vaultSalt: req.body.vaultSalt
+            vaultSalt: req.body.vaultSalt,
+            recoveryHash
         });
 
         createSendToken(newUser, 201, req, res);
@@ -163,6 +171,59 @@ export const getMe = async (req: Request, res: Response, next: NextFunction) => 
             data: { user }
         });
     } catch(err) {
+        next(err);
+    }
+};
+
+export const resetPasswordWithKey = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const { email, recoveryKey, newAuthHash, newVaultSalt } = req.body;
+
+        if (!email || !recoveryKey || !newAuthHash || !newVaultSalt) {
+            return next(new AppError('Please provide email, recovery key, new auth hash, and vault salt', 400));
+        }
+
+        const user = await User.findOne({ email: String(email).toLowerCase().trim() }).select('+recoveryHash');
+        if (!user || !user.recoveryHash) {
+            return next(new AppError('Invalid credentials or no recovery key registered for this account.', 401));
+        }
+
+        const isValidKey = await (user as any).correctRecoveryKey(recoveryKey, user.recoveryHash);
+        if (!isValidKey) {
+            return next(new AppError('Invalid Recovery Key. Please check the 24-character code.', 401));
+        }
+
+        user.password = newAuthHash;
+        user.vaultSalt = newVaultSalt;
+        await user.save();
+
+        createSendToken(user, 200, req, res);
+    } catch (err) {
+        next(err);
+    }
+};
+
+export const resetAccount = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const { email, newAuthHash, newVaultSalt } = req.body;
+        if (!email || !newAuthHash || !newVaultSalt) {
+            return next(new AppError('Please provide email, new auth hash, and vault salt', 400));
+        }
+
+        const user = await User.findOne({ email: String(email).toLowerCase().trim() });
+        if (!user) {
+            return next(new AppError('User not found', 404));
+        }
+
+        // Delete all old encrypted vault entries for this user since master key was lost
+        await VaultEntry.deleteMany({ userId: user._id });
+
+        user.password = newAuthHash;
+        user.vaultSalt = newVaultSalt;
+        await user.save();
+
+        createSendToken(user, 200, req, res);
+    } catch (err) {
         next(err);
     }
 };

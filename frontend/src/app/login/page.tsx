@@ -66,6 +66,12 @@ export default function Login() {
         }
     };
 
+    const handleGitHubOAuth = () => {
+        const clientId = process.env.NEXT_PUBLIC_GITHUB_CLIENT_ID || 'Ov23liXXXXXXXX';
+        const redirectUri = `${window.location.origin}/auth/callback/github`;
+        window.location.href = `https://github.com/login/oauth/authorize?client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&scope=user:email`;
+    };
+
     return (
         <div className="min-h-screen bg-background flex flex-col items-center justify-center p-6 relative overflow-hidden">
             {/* Background Orbs */}
@@ -108,6 +114,12 @@ export default function Login() {
                             onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                         />
                         
+                        <div className="flex justify-end">
+                            <Link href="/forgot-password" className="text-xs text-indigo-400 hover:text-indigo-300 font-medium transition-colors">
+                                Forgot Master Password?
+                            </Link>
+                        </div>
+                        
                         {error && (
                             <div className="p-3 bg-red-500/10 border border-red-500/20 rounded-lg">
                                 <p className="text-xs text-red-500 text-center">{error}</p>
@@ -132,7 +144,7 @@ export default function Login() {
                         <Button 
                             variant="secondary" 
                             className="w-full gap-3"
-                            onClick={() => alert('GitHub OAuth not configured yet.')}
+                            onClick={handleGitHubOAuth}
                             type="button"
                         >
                             <Shield size={20} />

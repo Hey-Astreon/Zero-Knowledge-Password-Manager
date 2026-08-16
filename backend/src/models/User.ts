@@ -32,6 +32,10 @@ const userSchema = new mongoose.Schema({
     vaultSalt: {
         type: String,
         required: [true, 'Vault salt is required for ZK encryption']
+    },
+    recoveryHash: {
+        type: String,
+        select: false
     }
 }, { timestamps: true });
 
@@ -44,6 +48,11 @@ userSchema.pre('save', async function(this: any) {
 // Instance method to check password
 userSchema.methods.correctPassword = async function(candidatePassword: string, userPassword: string) {
     return await bcrypt.compare(candidatePassword, userPassword);
+};
+
+// Instance method to check recovery key
+userSchema.methods.correctRecoveryKey = async function(candidateKey: string, userRecoveryHash: string) {
+    return await bcrypt.compare(candidateKey, userRecoveryHash);
 };
 
 const User = mongoose.model('User', userSchema);
