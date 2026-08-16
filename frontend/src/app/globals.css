@@ -1,13 +1,14 @@
 @import "tailwindcss/index.css";
 
 @theme inline {
-  --color-background: #050507;
-  --color-foreground: #ffffff;
-  --color-surface: #0E0E12;
-  --color-primary: #FF2E63;
-  --color-secondary: #D100FF;
-  --color-accent: #FF4D8D;
-  --color-text-secondary: #A1A1AA;
+  --color-background: #030712;
+  --color-foreground: #F9FAFB;
+  --color-surface: #0B0F19;
+  --color-surface-hover: #111827;
+  --color-primary: #00F2FE;
+  --color-secondary: #7F00FF;
+  --color-accent: #38EF7D;
+  --color-text-secondary: #9CA3AF;
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
@@ -18,33 +19,89 @@ body {
   overflow-x: hidden;
 }
 
-@layer base {
-  .glass-panel {
-    @apply bg-surface/60 backdrop-blur-2xl border border-white/10 shadow-2xl;
-  }
-  
-  .neon-glow {
-    box-shadow: 0 0 20px 2px rgba(255, 46, 99, 0.3);
-  }
+/* Custom Cyber Mesh Grid Background */
+.bg-cyber-grid {
+  background-image: 
+    linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
 
-  .neon-glow-hover:hover {
-    box-shadow: 0 0 30px 5px rgba(209, 0, 255, 0.4);
-  }
+/* Glassmorphism & Cyber Card Effects */
+.glass-panel {
+  background: rgba(11, 15, 25, 0.65);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
 
-  .text-gradient {
-    @apply bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary;
-  }
+.glass-panel-hover {
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
 
-  .bg-gradient-premium {
-    @apply bg-gradient-to-r from-primary hover:from-accent to-secondary transition-all;
-  }
+.glass-panel-hover:hover {
+  background: rgba(17, 24, 39, 0.8);
+  border-color: rgba(0, 242, 254, 0.3);
+  box-shadow: 0 25px 60px rgba(0, 242, 254, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  transform: translateY(-2px);
+}
 
-  @keyframes pulse-glow {
-    0%, 100% { box-shadow: 0 0 0 0 rgba(255, 46, 99, 0); opacity: 1; }
-    50% { box-shadow: 0 0 30px 10px rgba(255, 46, 99, 0.5); opacity: 0.9; }
-  }
+/* Neon Glow Utilities */
+.neon-glow {
+  box-shadow: 0 0 25px 2px rgba(0, 242, 254, 0.35);
+}
 
-  .animate-pulse-glow {
-    animation: pulse-glow 3s infinite ease-in-out;
-  }
+.neon-glow-secondary {
+  box-shadow: 0 0 25px 2px rgba(127, 0, 255, 0.35);
+}
+
+.text-gradient {
+  background: linear-gradient(135deg, #00F2FE 0%, #4FACFE 50%, #7F00FF 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.text-gradient-emerald {
+  background: linear-gradient(135deg, #10B981 0%, #34D399 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.bg-gradient-premium {
+  background: linear-gradient(135deg, #00F2FE 0%, #7F00FF 100%);
+}
+
+.bg-gradient-premium:hover {
+  background: linear-gradient(135deg, #38EF7D 0%, #00F2FE 100%);
+}
+
+/* Custom Keyframe Animations */
+@keyframes radar-sweep {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.animate-radar {
+  animation: radar-sweep 8s linear infinite;
+}
+
+@keyframes float-subtle {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-8px); }
+}
+
+.animate-float {
+  animation: float-subtle 4s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.animate-shimmer {
+  background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0) 100%);
+  background-size: 200% 100%;
+  animation: shimmer 3s infinite;
 }

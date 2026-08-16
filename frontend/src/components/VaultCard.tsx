@@ -1,10 +1,11 @@
 'use client';
 
 import { useState, useMemo } from 'react';
-import { Globe, User, Eye, EyeOff, Trash2, Copy, Star, Check, Shield, AlertTriangle, ShieldCheck, Loader2, Share2, Link, ExternalLink } from 'lucide-react';
+import { Globe, User, Eye, EyeOff, Trash2, Copy, Star, Check, Shield, AlertTriangle, ShieldCheck, Loader2, Share2, Sparkles } from 'lucide-react';
 import { Button } from './Button';
 import { analyzeStrength, checkBreach } from '@/utils/security';
 import { createShareLink } from '@/utils/sharing';
+import { motion, AnimatePresence } from 'framer-motion';
 
 interface VaultCardProps {
     entry: any;
@@ -53,11 +54,7 @@ export const VaultCard = ({ entry, onDelete }: VaultCardProps) => {
         }
     };
 
-    // Future-proof: In ZK mode, this will handle the decryption attempt
-    const isEncrypted = !!entry.iv;
-    const displayText = isEncrypted 
-        ? (showPassword ? entry.password : '••••••••••••') 
-        : (showPassword ? entry.password : '••••••••••••');
+    const displayText = showPassword ? entry.password : '••••••••••••••••';
 
     const copyToClipboard = () => {
         navigator.clipboard.writeText(entry.password);
@@ -66,145 +63,134 @@ export const VaultCard = ({ entry, onDelete }: VaultCardProps) => {
     };
 
     return (
-        <div className="group relative bg-zinc-900 border border-zinc-800 rounded-xl p-5 hover:border-zinc-700 transition-all hover:shadow-2xl hover:shadow-indigo-500/5 overflow-hidden">
-            {/* Top Row: Site Info & Favorite */}
-            <div className="flex justify-between items-start mb-4">
-                <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-lg bg-zinc-800 flex items-center justify-center text-zinc-400 group-hover:text-indigo-400 group-hover:bg-indigo-500/10 transition-colors">
-                        <Globe size={20} />
+        <motion.div 
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            whileHover={{ y: -4 }}
+            className="group relative glass-panel p-6 rounded-3xl border border-white/10 hover:border-primary/40 transition-all duration-300 shadow-xl overflow-hidden"
+        >
+            {/* Ambient Hover Glow */}
+            <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-secondary/5 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
+
+            {/* Top Bar: Site Info & Actions */}
+            <div className="flex justify-between items-start mb-5 relative z-10">
+                <div className="flex items-center gap-3.5">
+                    <div className="w-12 h-12 rounded-2xl bg-zinc-950/80 border border-white/10 flex items-center justify-center text-primary group-hover:neon-glow transition-all">
+                        <Globe size={22} />
                     </div>
                     <div>
-                        <h3 className="text-zinc-100 font-semibold leading-tight capitalize">{entry.site}</h3>
-                        <p className="text-zinc-500 text-xs flex items-center gap-1 mt-1">
-                            <User size={12} /> {entry.username}
+                        <h3 className="text-white font-black tracking-tight text-base capitalize">{entry.site || 'Untitled Entry'}</h3>
+                        <p className="text-text-secondary text-xs flex items-center gap-1.5 mt-0.5 font-mono">
+                            <User size={12} className="text-primary/70" /> {entry.username || 'No Username'}
                         </p>
                     </div>
                 </div>
-                <button className="text-zinc-600 hover:text-amber-400 transition-colors">
-                    <Star size={18} fill={entry.favorite ? 'currentColor' : 'none'} className={entry.favorite ? 'text-amber-400' : ''} />
-                </button>
+
+                <div className="flex items-center gap-1">
+                    <button 
+                        onClick={handleShare}
+                        disabled={sharing}
+                        className="p-2 rounded-xl text-zinc-500 hover:text-primary hover:bg-white/5 transition-all"
+                        title="Zero-Knowledge One-Time Share"
+                    >
+                        {sharing ? <Loader2 size={16} className="animate-spin text-primary" /> : <Share2 size={16} />}
+                    </button>
+                    <button 
+                        onClick={() => onDelete(entry._id)}
+                        className="p-2 rounded-xl text-zinc-500 hover:text-rose-400 hover:bg-rose-500/10 transition-all"
+                        title="Delete Entry"
+                    >
+                        <Trash2 size={16} />
+                    </button>
+                </div>
             </div>
 
             {/* Password Row */}
-            <div className="relative mt-2">
-                <div className="bg-black/20 rounded-lg px-3 py-2 flex items-center justify-between border border-white/5">
-                    <span className="font-mono text-zinc-400 text-sm overflow-hidden text-ellipsis whitespace-nowrap mr-2">
+            <div className="relative z-10 mt-3">
+                <div className="bg-zinc-950/80 border border-white/10 rounded-2xl px-4 py-2.5 flex items-center justify-between shadow-inner">
+                    <span className="font-mono text-white text-xs tracking-wider overflow-hidden text-ellipsis whitespace-nowrap mr-2 select-all">
                         {displayText}
                     </span>
-                    <div className="flex gap-1">
+                    <div className="flex items-center gap-1">
                         <Button
                             variant="ghost"
                             size="sm"
-                            className="h-8 w-8 p-0"
+                            className="h-8 w-8 p-0 text-zinc-400 hover:text-white"
                             onClick={() => setShowPassword(!showPassword)}
+                            title={showPassword ? "Hide password" : "Show password"}
                         >
-                            {showPassword ? <EyeOff size={14} /> : <Eye size={14} />}
+                            {showPassword ? <EyeOff size={15} /> : <Eye size={15} />}
                         </Button>
                         <Button
                             variant="ghost"
                             size="sm"
-                            className="h-8 w-8 p-0"
-                            onClick={() => copyToClipboard()}
+                            className="h-8 w-8 p-0 text-zinc-400 hover:text-primary"
+                            onClick={copyToClipboard}
+                            title="Copy Password"
                         >
-                            {copied ? <Check size={14} className="text-emerald-500" /> : <Copy size={14} />}
+                            {copied ? <Check size={15} className="text-emerald-400" /> : <Copy size={15} />}
                         </Button>
                     </div>
                 </div>
             </div>
 
-            {/* Security Intelligence Badges */}
-            <div className="flex items-center gap-2 mt-4 pt-4 border-t border-white/5">
-                <div className={`flex items-center gap-1.5 px-2 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider ${
-                    strength.score >= 3 ? 'bg-emerald-500/10 text-emerald-500' :
-                    strength.score >= 2 ? 'bg-amber-500/10 text-amber-500' :
-                    'bg-rose-500/10 text-rose-500'
-                }`}>
-                    <Shield size={10} />
-                    {strength.feedback}
+            {/* Strength Bar & Security Badges */}
+            <div className="mt-5 pt-4 border-t border-white/5 flex items-center justify-between relative z-10">
+                <div className="flex items-center gap-2">
+                    <div className={`px-2.5 py-1 rounded-full text-[10px] font-mono font-bold uppercase tracking-widest flex items-center gap-1.5 border ${
+                        strength.score >= 3 ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400' :
+                        strength.score >= 2 ? 'bg-amber-500/10 border-amber-500/30 text-amber-400' :
+                        'bg-rose-500/10 border-rose-500/30 text-rose-400'
+                    }`}>
+                        <Shield size={10} />
+                        {strength.feedback}
+                    </div>
                 </div>
 
                 <button 
                     onClick={handleCheckBreach}
                     disabled={checkingBreach || !!breachInfo}
-                    className={`flex items-center gap-1.5 px-2 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider transition-all ${
-                        checkingBreach ? 'bg-zinc-800 text-zinc-500' :
-                        breachInfo ? (breachInfo.count > 0 ? 'bg-rose-500 text-white' : 'bg-indigo-500/10 text-indigo-400') :
-                        'bg-zinc-800 text-zinc-400 hover:bg-zinc-700'
+                    className={`px-3 py-1 rounded-full text-[10px] font-mono font-bold uppercase tracking-widest transition-all flex items-center gap-1.5 border ${
+                        checkingBreach ? 'bg-zinc-900 border-white/5 text-zinc-500' :
+                        breachInfo ? (breachInfo.count > 0 ? 'bg-rose-500 border-rose-500 text-white shadow-lg shadow-rose-500/20' : 'bg-primary/10 border-primary/30 text-primary') :
+                        'bg-surface border-white/10 text-zinc-400 hover:text-white hover:border-white/20'
                     }`}
                 >
                     {checkingBreach ? <Loader2 size={10} className="animate-spin" /> : 
                      breachInfo ? (breachInfo.count > 0 ? <AlertTriangle size={10} /> : <ShieldCheck size={10} />) : 
-                     <Globe size={10} />}
+                     <Sparkles size={10} />}
                     {breachInfo ? (breachInfo.count > 0 ? `${breachInfo.count} Leaks` : 'Secure') : 'Check Breach'}
                 </button>
             </div>
 
-            {/* Hover Actions */}
-            <div className="absolute top-2 right-12 opacity-0 group-hover:opacity-100 transition-opacity">
-                <Button
-                    variant="danger"
-                    size="sm"
-                    className="h-8 w-8 p-0 bg-transparent border-none text-zinc-500 hover:text-red-500 hover:bg-transparent"
-                    onClick={() => onDelete(entry._id)}
-                >
-                    <Trash2 size={16} />
-                </Button>
-                <Button
-                    variant="ghost"
-                    size="sm"
-                    className="h-8 w-8 p-0 text-zinc-500 hover:text-indigo-400"
-                    onClick={handleShare}
-                    disabled={sharing}
-                >
-                    {sharing ? <Loader2 size={16} className="animate-spin" /> : <Share2 size={16} />}
-                </Button>
-            </div>
-
-            {/* Share Link Reveal: Cinematic Self-Destruct UI */}
-            {shareUrl && (
-                <div className="mt-4 p-4 bg-rose-500/10 border border-rose-500/20 rounded-xl animate-in slide-in-from-top-2 duration-500 relative overflow-hidden group">
-                    {/* Pulsing Aura */}
-                    <div className="absolute inset-0 bg-rose-500/5 animate-pulse pointer-events-none" />
-                    
-                    <div className="relative z-10 space-y-3">
-                        <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-2">
-                                <AlertTriangle size={14} className="text-rose-500 animate-bounce" />
-                                <span className="text-[10px] font-black uppercase tracking-[0.2em] text-rose-500">Self-Destructing Link</span>
-                            </div>
-                            <span className="text-[9px] text-rose-500/60 font-mono">10:00</span>
+            {/* One-Time Share Link Reveal Overlay */}
+            <AnimatePresence>
+                {shareUrl && (
+                    <motion.div 
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: 'auto' }}
+                        exit={{ opacity: 0, height: 0 }}
+                        className="mt-4 p-4 bg-rose-500/10 border border-rose-500/30 rounded-2xl relative overflow-hidden z-10"
+                    >
+                        <div className="flex items-center justify-between mb-2">
+                            <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-rose-400 flex items-center gap-1.5">
+                                <AlertTriangle size={12} className="animate-pulse" /> Self-Destruct Link Created
+                            </span>
                         </div>
-
-                        <div className="flex items-center justify-between gap-3 bg-black/40 p-2 rounded-lg border border-white/5">
-                            <span className="text-[10px] text-zinc-400 truncate font-mono flex-1">{shareUrl}</span>
+                        <div className="flex items-center justify-between gap-2 bg-zinc-950 p-2.5 rounded-xl border border-white/10">
+                            <span className="text-[10px] font-mono text-zinc-300 truncate flex-1">{shareUrl}</span>
                             <button 
                                 onClick={copyShareUrl}
-                                className={`px-3 py-1 rounded-md text-[10px] font-bold transition-all ${
-                                    shareCopied ? 'bg-emerald-500 text-white' : 'bg-zinc-800 text-zinc-300 hover:bg-zinc-700'
+                                className={`px-3 py-1 rounded-lg text-[10px] font-mono font-bold uppercase transition-all ${
+                                    shareCopied ? 'bg-emerald-500 text-white' : 'bg-primary text-black hover:bg-white'
                                 }`}
                             >
-                                {shareCopied ? 'COPIED' : 'COPY'}
+                                {shareCopied ? 'Copied' : 'Copy Link'}
                             </button>
                         </div>
-
-                        {/* Simulated Expiry Bar */}
-                        <div className="h-1 w-full bg-zinc-800 rounded-full overflow-hidden">
-                            <div className="h-full bg-rose-500 w-full animate-[shimmer_10s_infinite]" />
-                        </div>
-                        
-                        <p className="text-[8px] text-zinc-600 uppercase font-medium text-center">
-                            Access expires after <span className="text-zinc-400">single use</span> or <span className="text-zinc-400">10 minutes</span>
-                        </p>
-                    </div>
-                </div>
-            )}
-
-            {/* Note Preview if exists */}
-            {entry.notes && (
-                <p className="mt-4 text-xs text-zinc-600 line-clamp-1 italic border-t border-white/5 pt-3">
-                    &ldquo;{entry.notes}&rdquo;
-                </p>
-            )}
-        </div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+        </motion.div>
     );
 };
