@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Zap, LockKeyhole, Fingerprint, ArrowRightCircle, Menu, X, Terminal } from 'lucide-react';
+import { Zap, LockKeyhole, Fingerprint, ArrowRightCircle, Menu, X, Terminal, Shield, Key, Eye, Lock } from 'lucide-react';
 import { Logo } from '@/components/Logo';
 import { deriveKey, encryptData, generateSalt } from '@/utils/crypto';
 
@@ -65,18 +65,52 @@ export default function Landing() {
   ];
 
   return (
-    <div className="min-h-screen relative overflow-hidden bg-[#F2F2EE] text-[#192837] isolate">
-      {/* Background Video Layer */}
-      <video
-        autoPlay
-        muted
-        loop
-        playsInline
-        className="absolute inset-0 z-0 w-full h-full object-cover scale-105"
-        src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260606_131516_eca35265-ea66-4fbd-8d52-22aae6e1a503.mp4"
-      />
-      {/* Silky Frosted Glass Mask Overlay to dissolve video compression pixel squares */}
-      <div className="absolute inset-0 z-0 bg-[#F2F2EE]/75 backdrop-blur-[24px] pointer-events-none" />
+    <div className="min-h-screen relative overflow-hidden bg-[#F4F4F0] text-[#192837] isolate selection:bg-[#7342E2]/20">
+      {/* Dynamic Ambient Glow Orbs (Replaces Video Noise) */}
+      <div className="absolute top-[-100px] left-1/2 -translate-x-1/2 w-[700px] h-[450px] bg-gradient-to-tr from-[#7342E2]/12 via-[#A855F7]/15 to-[#EC4899]/10 blur-[120px] rounded-full pointer-events-none z-0" />
+      <div className="absolute top-[300px] -left-[150px] w-[500px] h-[500px] bg-[#7342E2]/10 blur-[130px] rounded-full pointer-events-none z-0" />
+      <div className="absolute top-[350px] -right-[150px] w-[500px] h-[500px] bg-[#3B82F6]/10 blur-[130px] rounded-full pointer-events-none z-0" />
+
+      {/* Floating 3D Iridescent Security Tokens */}
+      <motion.div
+        animate={{ y: [0, -12, 0], rotate: [0, 4, 0] }}
+        transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
+        className="hidden lg:flex absolute top-[220px] left-[8%] z-10 items-center justify-center w-20 h-20 rounded-3xl bg-gradient-to-br from-white/90 via-purple-100/60 to-purple-200/40 border border-white/80 shadow-[0_20px_50px_rgba(115,66,226,0.18)] backdrop-blur-md"
+      >
+        <div className="w-12 h-12 rounded-2xl bg-[#7342E2] text-white flex items-center justify-center shadow-lg">
+          <Lock size={22} />
+        </div>
+      </motion.div>
+
+      <motion.div
+        animate={{ y: [0, 14, 0], rotate: [0, -6, 0] }}
+        transition={{ duration: 7, repeat: Infinity, ease: 'easeInOut', delay: 1 }}
+        className="hidden lg:flex absolute top-[240px] right-[8%] z-10 items-center justify-center w-20 h-20 rounded-3xl bg-gradient-to-br from-white/90 via-pink-100/60 to-purple-200/40 border border-white/80 shadow-[0_20px_50px_rgba(236,72,153,0.18)] backdrop-blur-md"
+      >
+        <div className="w-12 h-12 rounded-2xl bg-[#EC4899] text-white flex items-center justify-center shadow-lg">
+          <Shield size={22} />
+        </div>
+      </motion.div>
+
+      <motion.div
+        animate={{ y: [0, -16, 0], rotate: [0, 8, 0] }}
+        transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut', delay: 2 }}
+        className="hidden lg:flex absolute bottom-[180px] left-[12%] z-10 items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-white/90 via-indigo-100/60 to-blue-200/40 border border-white/80 shadow-[0_15px_40px_rgba(59,130,246,0.18)] backdrop-blur-md"
+      >
+        <div className="w-10 h-10 rounded-xl bg-[#3B82F6] text-white flex items-center justify-center shadow-md">
+          <Key size={18} />
+        </div>
+      </motion.div>
+
+      <motion.div
+        animate={{ y: [0, 12, 0], rotate: [0, -4, 0] }}
+        transition={{ duration: 6.5, repeat: Infinity, ease: 'easeInOut', delay: 1.5 }}
+        className="hidden lg:flex absolute bottom-[190px] right-[12%] z-10 items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-white/90 via-amber-100/60 to-orange-200/40 border border-white/80 shadow-[0_15px_40px_rgba(245,158,11,0.18)] backdrop-blur-md"
+      >
+        <div className="w-10 h-10 rounded-xl bg-[#F59E0B] text-white flex items-center justify-center shadow-md">
+          <Eye size={18} />
+        </div>
+      </motion.div>
 
       {/* Navbar */}
       <nav className="relative z-20 max-w-[1280px] mx-auto px-5 sm:px-8 py-4 sm:py-5 flex justify-between items-center">
@@ -107,7 +141,7 @@ export default function Landing() {
             </button>
           </Link>
           <Link href="/login">
-            <button className="bg-[#FFFFFF] text-[#192837] text-sm font-semibold px-5 py-2.5 rounded-full hover:bg-[#E6E6E0] transition-all active:scale-95 border border-[#192837]/10">
+            <button className="bg-[#FFFFFF] text-[#192837] text-sm font-semibold px-5 py-2.5 rounded-full hover:bg-slate-100 transition-all active:scale-95 border border-[#192837]/10">
               Sign In
             </button>
           </Link>
@@ -205,7 +239,7 @@ export default function Landing() {
 
       {/* Hero Content */}
       <main className="relative z-10 max-w-[1280px] mx-auto px-5 sm:px-8 pt-[clamp(40px,8vw,72px)] pb-12 text-center">
-        <div className="max-w-[660px] mx-auto space-y-6">
+        <div className="max-w-[680px] mx-auto space-y-6">
           
           {/* Heading */}
           <motion.h1
@@ -213,7 +247,7 @@ export default function Landing() {
             initial="hidden"
             animate="visible"
             variants={fadeUp}
-            className="font-heading text-[clamp(1.65rem,5vw,3rem)] leading-[1.08] tracking-[-0.01em] text-[#192837] text-center"
+            className="font-heading text-[clamp(1.75rem,5.5vw,3.25rem)] leading-[1.08] tracking-[-0.015em] text-[#192837] text-center font-bold"
           >
             <span>
               Lock{' '}
@@ -235,7 +269,7 @@ export default function Landing() {
             initial="hidden"
             animate="visible"
             variants={fadeUp}
-            className="font-body text-[clamp(0.9rem,2.5vw,1.1rem)] text-[#192837] opacity-80 max-w-[560px] mx-auto leading-[1.65] text-center"
+            className="font-body text-[clamp(0.95rem,2.5vw,1.15rem)] text-[#192837] opacity-85 max-w-[580px] mx-auto leading-[1.65] text-center"
           >
             Zero stress, total control. Unbreakable storage, one-tap access, and pro-grade tools for your non-stop world.
           </motion.p>
@@ -252,10 +286,10 @@ export default function Landing() {
               <motion.button
                 whileHover={{ scale: 1.04, filter: 'brightness(1.1)' }}
                 whileTap={{ scale: 0.96 }}
-                className="bg-[#7342E2] text-white text-[clamp(0.9rem,2vw,1rem)] py-[17px] px-6 min-w-[210px] rounded-[50px] shadow-[0_4px_24px_rgba(115,66,226,0.28)] flex items-center justify-between gap-8 font-semibold"
+                className="bg-[#7342E2] text-white text-[clamp(0.9rem,2vw,1rem)] py-[17px] px-7 min-w-[220px] rounded-[50px] shadow-[0_6px_30px_rgba(115,66,226,0.32)] flex items-center justify-between gap-8 font-semibold"
               >
                 <span>Get It Free</span>
-                <ArrowRightCircle size={20} />
+                <ArrowRightCircle size={22} />
               </motion.button>
             </Link>
           </motion.div>
@@ -266,8 +300,8 @@ export default function Landing() {
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.5, duration: 0.6 }}
-          className="mt-20 max-w-4xl mx-auto bg-white/95 backdrop-blur-md border border-[#192837]/10 p-8 rounded-3xl shadow-xl text-left"
+          transition={{ delay: 0.4, duration: 0.6 }}
+          className="mt-20 max-w-4xl mx-auto bg-white/95 backdrop-blur-xl border border-[#192837]/10 p-8 rounded-[28px] shadow-[0_20px_60px_-15px_rgba(25,40,55,0.08)] text-left relative z-20"
         >
           <div className="flex items-center justify-between mb-6 pb-4 border-b border-[#192837]/10">
             <div className="flex items-center gap-3">
@@ -294,7 +328,7 @@ export default function Landing() {
                 type="text"
                 value={simInput}
                 onChange={(e) => setSimInput(e.target.value)}
-                className="w-full bg-[#F2F2EE] border border-[#192837]/15 rounded-xl px-4 py-3 font-mono text-sm text-[#192837] focus:outline-none focus:border-[#7342E2] focus:ring-1 focus:ring-[#7342E2]/30 transition-all"
+                className="w-full bg-[#F4F4F0] border border-[#192837]/15 rounded-xl px-4 py-3 font-mono text-sm text-[#192837] focus:outline-none focus:border-[#7342E2] focus:ring-1 focus:ring-[#7342E2]/30 transition-all"
                 placeholder="Type a password to test..."
               />
               <p className="text-[11px] text-[#192837]/70 leading-relaxed">
@@ -307,7 +341,7 @@ export default function Landing() {
                 <span>2. Encrypted Server Payload</span>
                 {isEncrypting && <span className="text-[10px] text-[#7342E2] font-mono font-bold">Encrypting...</span>}
               </label>
-              <div className="bg-[#F2F2EE] border border-[#192837]/15 p-4 rounded-xl font-mono text-xs space-y-2 text-[#192837]">
+              <div className="bg-[#F4F4F0] border border-[#192837]/15 p-4 rounded-xl font-mono text-xs space-y-2 text-[#192837]">
                 <div><span className="text-[#192837]/60">Ciphertext:</span> <span className="text-[#7342E2] font-semibold break-all">{simCipher.encryptedData}</span></div>
                 <div><span className="text-[#192837]/60">12-Byte IV:</span> <span className="text-purple-700">{simCipher.iv}</span></div>
                 <div><span className="text-[#192837]/60">PBKDF2 Salt:</span> <span className="text-emerald-700">{simCipher.salt}</span></div>
