@@ -38,13 +38,14 @@ export const signup = async (req: Request, res: Response, next: NextFunction) =>
 export const getSalt = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const { email } = req.params;
-        if (!email) return next(new AppError('Email is required', 400));
+        const emailStr = String(email || '');
+        if (!emailStr) return next(new AppError('Email is required', 400));
 
-        if (email.toLowerCase() === 'ping') {
+        if (emailStr.toLowerCase() === 'ping') {
             return res.status(200).json({ success: true, message: 'pong' });
         }
 
-        const user = await User.findOne({ email: String(email).toLowerCase().trim() }).select('+vaultSalt');
+        const user = await User.findOne({ email: emailStr.toLowerCase().trim() }).select('+vaultSalt');
 
         if (!user || !user.vaultSalt) {
             // Return a generic error to avoid user enumeration
