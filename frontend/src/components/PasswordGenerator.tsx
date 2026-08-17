@@ -29,7 +29,7 @@ export const PasswordGenerator: React.FC<PasswordGeneratorProps> = ({ onApply })
         let result = '';
         const values = new Uint32Array(length);
         crypto.getRandomValues(values);
-        
+
         for (let i = 0; i < length; i++) {
             result += chars[values[i] % chars.length];
         }
@@ -41,22 +41,23 @@ export const PasswordGenerator: React.FC<PasswordGeneratorProps> = ({ onApply })
     }, [length, options]);
 
     return (
-        <div className="p-6 bg-zinc-950 border border-zinc-800 rounded-2xl space-y-6 shadow-2xl animate-in slide-in-from-top-4 duration-300">
+        <div className="p-6 bg-elevated border border-border rounded-2xl space-y-6 shadow-card">
             <div className="flex items-center gap-3">
-                <div className="p-2 rounded-lg bg-indigo-500/10 text-indigo-400">
+                <div className="p-2 rounded-lg bg-primary/10 text-primary">
                     <Zap size={20} />
                 </div>
-                <h3 className="text-zinc-100 font-bold">Secure Generator</h3>
+                <h3 className="text-foreground font-bold">Secure Generator</h3>
             </div>
 
             {/* Preview Area */}
             <div className="relative group">
-                <div className="w-full bg-black border border-zinc-800 rounded-xl px-4 py-4 pr-12 font-mono text-lg text-indigo-400 overflow-hidden text-ellipsis select-all break-all min-h-[64px] flex items-center">
+                <div className="w-full bg-background border border-border rounded-xl px-4 py-4 pr-12 font-mono text-lg text-primary overflow-hidden text-ellipsis select-all break-all min-h-[64px] flex items-center shadow-inner">
                     {password}
                 </div>
-                <button 
+                <button
                     onClick={generate}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 p-2 rounded-lg hover:bg-zinc-800 text-zinc-500 hover:text-white transition-all active:rotate-180 duration-500"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 p-2 rounded-lg hover:bg-surface text-faint hover:text-foreground transition-all active:rotate-180 duration-500"
+                    title="Regenerate"
                 >
                     <RefreshCw size={20} />
                 </button>
@@ -65,17 +66,17 @@ export const PasswordGenerator: React.FC<PasswordGeneratorProps> = ({ onApply })
             {/* Controls */}
             <div className="space-y-4">
                 <div className="space-y-2">
-                    <div className="flex justify-between text-xs text-zinc-500 uppercase font-bold tracking-widest">
+                    <div className="flex justify-between text-xs text-muted uppercase font-bold tracking-widest">
                         <span>Length</span>
-                        <span className="text-indigo-400">{length} Chars</span>
+                        <span className="text-primary">{length} Chars</span>
                     </div>
-                    <input 
+                    <input
                         type="range"
                         min="8"
                         max="64"
                         value={length}
                         onChange={(e) => setLength(parseInt(e.target.value))}
-                        className="w-full h-1.5 bg-zinc-800 rounded-lg appearance-none cursor-pointer accent-indigo-500"
+                        className="w-full h-1.5 bg-border rounded-lg appearance-none cursor-pointer accent-indigo-500"
                     />
                 </div>
 
@@ -85,7 +86,7 @@ export const PasswordGenerator: React.FC<PasswordGeneratorProps> = ({ onApply })
                             key={key}
                             onClick={() => setOptions(prev => ({ ...prev, [key]: !val }))}
                             className={`flex items-center justify-between px-3 py-2 rounded-lg border transition-all text-xs font-semibold capitalize ${
-                                val ? 'bg-indigo-500/10 border-indigo-500/30 text-indigo-400' : 'bg-transparent border-zinc-800 text-zinc-500 hover:border-zinc-700'
+                                val ? 'bg-primary/10 border-primary/30 text-primary' : 'bg-transparent border-border text-muted hover:border-primary/30'
                             }`}
                         >
                             {key}
@@ -95,12 +96,12 @@ export const PasswordGenerator: React.FC<PasswordGeneratorProps> = ({ onApply })
                 </div>
             </div>
 
-            <Button 
-                variant="primary" 
-                className="w-full h-12 shadow-indigo-500/20"
+            <Button
+                variant="primary"
+                className="w-full h-12"
                 onClick={() => onApply(password)}
             >
-                <ShieldCheck size={18} className="mr-2" />
+                <ShieldCheck size={18} />
                 Apply Password
             </Button>
         </div>

@@ -54,7 +54,7 @@ function GitHubCallbackContent() {
                     </div>
                     <button
                         onClick={() => router.push('/login')}
-                        className="px-6 py-2 bg-surface border border-white/10 rounded-xl text-xs text-white hover:bg-white/5 transition-all"
+                        className="px-6 py-2.5 bg-surface border border-border rounded-xl text-xs text-foreground hover:border-primary/40 transition-all"
                     >
                         Back to Login
                     </button>
@@ -62,8 +62,8 @@ function GitHubCallbackContent() {
             ) : (
                 <div className="space-y-3">
                     <Loader2 size={32} className="animate-spin text-primary mx-auto" />
-                    <h2 className="text-xl font-bold text-white">Authenticating with GitHub...</h2>
-                    <p className="text-xs text-text-secondary">Verifying credentials and preparing your vault.</p>
+                    <h2 className="text-xl font-bold text-foreground">Authenticating with GitHub...</h2>
+                    <p className="text-xs text-muted">Verifying credentials and preparing your vault.</p>
                 </div>
             )}
         </div>

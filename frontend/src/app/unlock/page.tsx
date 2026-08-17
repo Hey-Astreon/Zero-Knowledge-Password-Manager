@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import api from '@/services/api';
 import { UnlockVault } from '@/components/UnlockVault';
-import { Loader2, AlertCircle } from 'lucide-react';
+import { Loader2, AlertCircle, Lock } from 'lucide-react';
 import { useCrypto } from '@/components/CryptoContext';
 
 export default function UnlockPage() {
@@ -25,7 +25,7 @@ export default function UnlockPage() {
 
     useEffect(() => {
         if (status === 'loading') return;
-        
+
         if (status === 'unauthenticated') {
             router.replace('/login');
             return;
@@ -38,15 +38,15 @@ export default function UnlockPage() {
                     const response = await api.post('/auth/oauth/github', {
                         accessToken: session.accessToken
                     });
-                    
+
                     // Native express JWT cookie is now set securely via the response.
-                    
+
                     // Fetch or parse the vaultSalt
                     const user = response.data.data.user;
                     if (user.vaultSalt) {
                         localStorage.setItem('zk_vault_salt', user.vaultSalt);
                     }
-                    
+
                     setSynced(true);
                 } catch (err: any) {
                     // Could be invalid email or GitHub failure
@@ -67,9 +67,9 @@ export default function UnlockPage() {
 
     if (error) {
         return (
-            <div className="min-h-screen bg-black flex items-center justify-center p-6">
+            <div className="min-h-screen bg-background flex items-center justify-center p-6">
                 <div className="p-4 bg-red-500/10 border border-red-500/20 text-red-500 rounded-xl flex items-center gap-3">
-                    <AlertCircle />
+                    <AlertCircle size={16} />
                     {error}
                 </div>
             </div>
@@ -78,19 +78,19 @@ export default function UnlockPage() {
 
     if (syncing || status === 'loading') {
         return (
-            <div className="min-h-screen bg-black flex flex-col items-center justify-center p-6 bg-[url('https://www.transparenttextures.com/patterns/dark-matter.png')]">
-                 <div className="animate-pulse flex flex-col items-center gap-4 text-zinc-500">
-                    <Loader2 className="animate-spin text-indigo-500" size={32} />
+            <div className="min-h-screen bg-background flex flex-col items-center justify-center p-6">
+                <div className="animate-pulse flex flex-col items-center gap-4 text-muted">
+                    <Loader2 className="animate-spin text-primary" size={32} />
                     <p className="text-sm uppercase tracking-widest font-mono">Securing Native Connection...</p>
-                 </div>
+                </div>
             </div>
         );
     }
 
     return (
-        <div className="min-h-screen bg-black bg-[url('https://www.transparenttextures.com/patterns/dark-matter.png')]">
-             {/* UnlockVault takes over the screen natively since key is null initially */}
-             <UnlockVault />
+        <div className="min-h-screen bg-background">
+            {/* UnlockVault takes over the screen natively since key is null initially */}
+            <UnlockVault />
         </div>
     );
 }

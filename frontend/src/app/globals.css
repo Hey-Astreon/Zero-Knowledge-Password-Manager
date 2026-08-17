@@ -1,8 +1,68 @@
 @import "tailwindcss/index.css";
 
+/* Class-based dark mode (`.dark` on <html>) */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* ─────────────────────────────────────────────
+   DESIGN TOKENS — mapped into Tailwind utilities
+   ───────────────────────────────────────────── */
 @theme inline {
   --font-sans: var(--font-inter), "Inter", ui-sans-serif, system-ui, sans-serif;
-  --font-mono: var(--font-mono), "JetBrains Mono", monospace;
+  --font-mono: var(--font-mono), "JetBrains Mono", ui-monospace, monospace;
+
+  /* Semantic colors */
+  --color-background: var(--bg);
+  --color-surface: var(--surface);
+  --color-elevated: var(--elevated);
+  --color-border: var(--border-c);
+  --color-primary: var(--primary);
+  --color-primary-strong: var(--primary-strong);
+  --color-accent: var(--accent);
+  --color-foreground: var(--fg);
+  --color-muted: var(--muted);
+  --color-faint: var(--faint);
+  --color-text-secondary: var(--muted); /* legacy alias used by some pages */
+
+  /* Shadows */
+  --shadow-card: 0 1px 2px rgba(15, 23, 42, 0.04), 0 8px 24px -8px rgba(15, 23, 42, 0.08);
+  --shadow-card-hover: 0 2px 4px rgba(15, 23, 42, 0.05), 0 16px 40px -12px rgba(15, 23, 42, 0.16);
+  --shadow-glow: 0 0 0 1px rgba(99, 102, 241, 0.25), 0 8px 32px -6px rgba(99, 102, 241, 0.45);
+}
+
+/* ─────────────────────────────────────────────
+   LIGHT THEME (default tokens)
+   ───────────────────────────────────────────── */
+:root {
+  --bg: #f7f8fc;
+  --surface: #ffffff;
+  --elevated: #ffffff;
+  --border-c: #e4e7ef;
+  --primary: #4f46e5;
+  --primary-strong: #4338ca;
+  --accent: #0891b2;
+  --fg: #0f172a;
+  --muted: #55617a;
+  --faint: #94a0b8;
+
+  color-scheme: light;
+}
+
+/* ─────────────────────────────────────────────
+   DARK THEME (default for the app)
+   ───────────────────────────────────────────── */
+.dark {
+  --bg: #07070d;
+  --surface: #0e0e18;
+  --elevated: #151522;
+  --border-c: #232338;
+  --primary: #818cf8;
+  --primary-strong: #a5b4fc;
+  --accent: #22d3ee;
+  --fg: #f2f3f8;
+  --muted: #9aa3b8;
+  --faint: #5d6577;
+
+  color-scheme: dark;
 }
 
 * {
@@ -11,204 +71,91 @@
   padding: 0;
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
 body {
-  background: #ffffff;
-  color: #0f172a;
+  background: var(--bg);
+  color: var(--fg);
   font-family: var(--font-sans);
   overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-/* Motionsites AI Marketing Section Specs */
-.c1-container {
-  max-width: 1100px;
-  width: 100%;
-  margin: 0 auto;
-  text-align: center;
+::selection {
+  background: color-mix(in srgb, var(--primary) 25%, transparent);
 }
 
-.c1-badge {
-  font-size: 0.75rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  background: linear-gradient(90deg, #F5C344, #F28482, #B567C2);
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border-c);
+  border-radius: 8px;
+  border: 2px solid var(--bg);
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--faint);
+}
+
+/* ─────────────────────────────────────────────
+   PREMIUM UTILITY CLASSES
+   ───────────────────────────────────────────── */
+
+/* Frosted glass card */
+.glass-panel {
+  background: var(--surface);
+  border: 1px solid var(--border-c);
+  box-shadow: var(--shadow-card);
+  backdrop-filter: blur(16px);
+}
+
+/* Signature indigo → violet → cyan gradient */
+.bg-gradient-premium {
+  background-image: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #06b6d4 100%);
+}
+
+/* Soft neon halo for primary elements */
+.neon-glow {
+  box-shadow: 0 0 0 1px rgba(99, 102, 241, 0.25), 0 8px 32px -6px rgba(99, 102, 241, 0.45);
+}
+
+/* Gradient text */
+.text-gradient {
+  background-image: linear-gradient(120deg, #818cf8, #c084fc 55%, #22d3ee);
   -webkit-background-clip: text;
+  background-clip: text;
   -webkit-text-fill-color: transparent;
-  margin-bottom: 16px;
-  display: inline-block;
+  color: transparent;
 }
 
-.c1-title {
-  font-size: 2.75rem;
-  font-weight: 500;
-  color: #0f172a;
-  letter-spacing: -0.02em;
-  margin-bottom: 12px;
+/* Subtle grid backdrop */
+.bg-grid {
+  background-image:
+    linear-gradient(to right, var(--border-c) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--border-c) 1px, transparent 1px);
+  background-size: 44px 44px;
+  mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, black 40%, transparent 100%);
+  -webkit-mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, black 40%, transparent 100%);
 }
 
-.c1-subtitle {
-  font-size: 1.125rem;
-  color: #64748b;
-  line-height: 1.5;
-  margin-bottom: 50px;
-}
-
-.c1-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 24px;
-}
-
-@media (max-width: 900px) {
-  .c1-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-@media (max-width: 600px) {
-  .c1-grid {
-    grid-template-columns: 1fr;
-  }
-  .c1-title {
-    font-size: 2.25rem;
-  }
-}
-
-/* Base Card Specs */
-.c1-card {
-  border-radius: 20px;
-  height: 340px;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  position: relative;
-  overflow: hidden;
-  text-align: left;
-  background: #F4F8F9;
-  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.1);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.c1-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.15);
-}
-
-.c1-card h3 {
-  font-size: 1.05rem;
-  font-weight: 600;
-  color: #1e293b;
-  padding: 24px;
-  z-index: 2;
-  position: relative;
-}
-
-/* Card 1 Specs */
-.c1-card-1 {
-  background: radial-gradient(circle at 50% 0%, #FFB347 0%, #F9ED96 30%, #F4F8F9 60%, #F4F8F9 100%);
-}
-
-.c1-blur-text {
-  background: linear-gradient(90deg, #FFB347, #E5A1F5);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  font-weight: 600;
-}
-
-/* Card 2 Specs */
-.c1-card-2 {
-  background: radial-gradient(circle at 50% 0%, #E5A1F5 0%, #F8ACA0 30%, #F4F8F9 60%, #F4F8F9 100%);
-}
-
-.c1-api-visual {
+/* Ambient blurred orbs */
+.bg-orb {
   position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 70px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0 24px;
+  border-radius: 9999px;
+  filter: blur(120px);
+  pointer-events: none;
 }
 
-.c1-network-img {
-  width: 100%;
-  height: 180px;
-  object-fit: contain;
-  margin-top: 20px;
-}
-
-/* Card 3 Specs */
-.c1-card-3 {
-  background: radial-gradient(circle at 50% 0%, #F9ED96 0%, #E5A1F5 30%, #F4F8F9 60%, #F4F8F9 100%);
-}
-
-.c1-mesh {
-  position: absolute;
-  inset: 0;
-  background-image: 
-    linear-gradient(to right, rgba(255, 255, 255, 0.8) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(255, 255, 255, 0.8) 1px, transparent 1px);
-  background-size: 16px 16px;
-  -webkit-mask-image: radial-gradient(circle at center top, black 0%, transparent 80%);
-  mask-image: radial-gradient(circle at center top, black 0%, transparent 80%);
-}
-
-.c1-folder {
-  position: absolute;
-  top: 50px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 170px;
-  filter: drop-shadow(0 15px 25px rgba(0, 0, 0, 0.08));
-}
-
-.c1-search {
-  position: absolute;
-  top: 220px;
-  left: 50%;
-  transform: translateX(-50%);
-  background: #ffffff;
-  border: 1px solid #000000;
-  padding: 6px 18px;
-  border-radius: 20px;
-  font-size: 0.75rem;
-  font-weight: 500;
-  color: #1e293b;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
-  white-space: nowrap;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  z-index: 2;
-}
-
-/* Add Details Pill Button */
-.c1-pill-btn {
-  position: absolute;
-  top: 180px;
-  left: 40px;
-  background: #ffffff;
-  border: 1px solid #000000;
-  padding: 5px 14px;
-  border-radius: 20px;
-  font-size: 0.75rem;
-  font-weight: 600;
-  color: #1e293b;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  z-index: 2;
-}
-
-.c1-cursor {
-  position: absolute;
-  top: 205px;
-  left: 110px;
-  width: 24px;
-  height: 24px;
-  filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.2));
-  z-index: 10;
+/* Focus ring for keyboard users */
+:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
 }

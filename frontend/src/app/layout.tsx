@@ -6,7 +6,7 @@ import { Providers } from '@/components/Providers';
 const inter = Inter({
   variable: "--font-inter",
   subsets: ["latin"],
-  weight: ["400", "500", "600"],
+  weight: ["400", "500", "600", "700", "800"],
 });
 
 const jetbrainsMono = JetBrains_Mono({
@@ -15,8 +15,8 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Alyra Lock – Built for Speed & Security",
-  description: "Alyra Lock – Zero-Knowledge Hardware-Grade Password Governance",
+  title: "Alyra Lock – Zero-Knowledge Password Vault",
+  description: "Military-grade client-side encryption. Zero server trust. Your passwords never leave your device.",
 };
 
 export default function RootLayout({
@@ -27,9 +27,18 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${inter.variable} ${jetbrainsMono.variable} h-full antialiased`}
+      suppressHydrationWarning
+      className={`${inter.variable} ${jetbrainsMono.variable} dark h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col font-sans bg-white text-slate-900 selection:bg-amber-200">
+      <head>
+        {/* Apply theme before paint to avoid flash — dark is the default */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){try{var t=localStorage.getItem('alyra-theme');var dark=t?t==='dark':true;document.documentElement.classList.toggle('dark',dark);}catch(e){document.documentElement.classList.add('dark');}})();`,
+          }}
+        />
+      </head>
+      <body className="min-h-full flex flex-col font-sans">
         <Providers>
           {children}
         </Providers>

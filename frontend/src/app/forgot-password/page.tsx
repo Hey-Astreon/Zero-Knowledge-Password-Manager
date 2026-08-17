@@ -4,6 +4,8 @@ import { useState } from 'react';
 import { Shield, Key, RefreshCw, ArrowLeft, AlertTriangle } from 'lucide-react';
 import { Button } from '@/components/Button';
 import { Input } from '@/components/Input';
+import { Logo } from '@/components/Logo';
+import { ThemeToggle } from '@/components/ThemeToggle';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
@@ -92,34 +94,41 @@ export default function ForgotPassword() {
     };
 
     return (
-        <div className="min-h-screen bg-background flex flex-col items-center justify-center p-6 relative overflow-hidden">
-            {/* Background Orbs */}
-            <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-primary/10 blur-[150px] rounded-full pointer-events-none" />
-            <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-amber-500/10 blur-[150px] rounded-full pointer-events-none" />
+        <div className="min-h-screen bg-background text-foreground flex flex-col items-center justify-center p-6 relative overflow-hidden">
+            {/* Backdrop */}
+            <div className="absolute inset-0 bg-grid opacity-50" />
+            <div className="bg-orb w-[500px] h-[500px] top-[-180px] left-1/2 -translate-x-1/2 bg-primary/10" />
+            <div className="bg-orb w-[400px] h-[400px] bottom-[-160px] right-[-120px] bg-amber-500/10" />
 
-            <motion.div 
+            {/* Top bar */}
+            <div className="absolute top-0 inset-x-0 z-20 flex items-center justify-between px-6 py-4">
+                <Logo size="sm" />
+                <ThemeToggle />
+            </div>
+
+            <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="w-full max-w-md space-y-8 relative z-10"
+                className="w-full max-w-md space-y-6 relative z-10"
             >
-                {/* Logo & Header */}
-                <div className="text-center space-y-4">
-                    <div className="inline-flex w-16 h-16 rounded-2xl bg-gradient-premium neon-glow items-center justify-center">
-                        <Shield size={32} className="text-white" />
+                {/* Header */}
+                <div className="text-center space-y-3">
+                    <div className="inline-flex w-14 h-14 rounded-2xl bg-gradient-premium neon-glow items-center justify-center text-white shadow-lg">
+                        <Shield size={26} />
                     </div>
-                    <div className="space-y-1">
-                        <h1 className="text-3xl font-extrabold text-white tracking-tight">Account Recovery</h1>
-                        <p className="text-text-secondary text-sm">Zero-Knowledge Master Key Reset</p>
+                    <div>
+                        <h1 className="text-3xl font-extrabold text-foreground tracking-tight">Account Recovery</h1>
+                        <p className="text-muted text-sm">Zero-Knowledge Master Key Reset</p>
                     </div>
                 </div>
 
                 {/* Mode Selector Tabs */}
-                <div className="flex p-1 bg-surface border border-white/10 rounded-xl">
+                <div className="flex p-1.5 bg-elevated border border-border rounded-2xl">
                     <button
                         type="button"
                         onClick={() => { setMode('recovery_key'); setError(null); }}
-                        className={`flex-1 py-2 text-xs font-bold rounded-lg transition-all flex items-center justify-center gap-2 ${
-                            mode === 'recovery_key' ? 'bg-primary text-white shadow-lg shadow-primary/20' : 'text-text-secondary hover:text-white'
+                        className={`flex-1 py-2.5 text-xs font-bold rounded-xl transition-all flex items-center justify-center gap-2 ${
+                            mode === 'recovery_key' ? 'bg-gradient-premium neon-glow text-white' : 'text-muted hover:text-foreground'
                         }`}
                     >
                         <Key size={14} />
@@ -128,8 +137,8 @@ export default function ForgotPassword() {
                     <button
                         type="button"
                         onClick={() => { setMode('account_reset'); setError(null); }}
-                        className={`flex-1 py-2 text-xs font-bold rounded-lg transition-all flex items-center justify-center gap-2 ${
-                            mode === 'account_reset' ? 'bg-rose-500 text-white shadow-lg shadow-rose-500/20' : 'text-text-secondary hover:text-white'
+                        className={`flex-1 py-2.5 text-xs font-bold rounded-xl transition-all flex items-center justify-center gap-2 ${
+                            mode === 'account_reset' ? 'bg-rose-600 text-white shadow-glow' : 'text-muted hover:text-foreground'
                         }`}
                     >
                         <RefreshCw size={14} />
@@ -138,7 +147,7 @@ export default function ForgotPassword() {
                 </div>
 
                 {/* Card */}
-                <div className="glass-panel p-8 rounded-[2rem]">
+                <div className="glass-panel p-8 rounded-3xl">
                     {mode === 'recovery_key' ? (
                         <form onSubmit={handleRecoveryReset} className="space-y-5">
                             <Input
@@ -182,7 +191,7 @@ export default function ForgotPassword() {
 
                             {success && (
                                 <div className="p-3 bg-emerald-500/10 border border-emerald-500/20 rounded-lg">
-                                    <p className="text-xs text-emerald-400 text-center">{success}</p>
+                                    <p className="text-xs text-emerald-500 text-center">{success}</p>
                                 </div>
                             )}
 
@@ -193,11 +202,11 @@ export default function ForgotPassword() {
                     ) : (
                         <form onSubmit={handleAccountReset} className="space-y-5">
                             <div className="p-4 bg-rose-500/10 border border-rose-500/20 rounded-xl space-y-2">
-                                <div className="flex items-center gap-2 text-rose-400 font-bold text-xs">
+                                <div className="flex items-center gap-2 text-rose-500 font-bold text-xs">
                                     <AlertTriangle size={16} />
                                     <span>Zero-Knowledge Protection Warning</span>
                                 </div>
-                                <p className="text-[11px] text-text-secondary leading-relaxed">
+                                <p className="text-[11px] text-muted leading-relaxed">
                                     Without your Recovery Key, old encrypted vault data cannot be recovered. Resetting your account will wipe old vault items and create a clean master key.
                                 </p>
                             </div>
@@ -235,11 +244,11 @@ export default function ForgotPassword() {
 
                             {success && (
                                 <div className="p-3 bg-emerald-500/10 border border-emerald-500/20 rounded-lg">
-                                    <p className="text-xs text-emerald-400 text-center">{success}</p>
+                                    <p className="text-xs text-emerald-500 text-center">{success}</p>
                                 </div>
                             )}
 
-                            <Button type="submit" variant="secondary" className="w-full h-12 bg-rose-500 hover:bg-rose-600 text-white" disabled={loading}>
+                            <Button type="submit" className="w-full h-12 bg-rose-600 hover:bg-rose-500 border-rose-600 text-white shadow-glow" disabled={loading}>
                                 {loading ? 'Wiping & Resetting...' : 'Confirm Account Reset'}
                             </Button>
                         </form>
@@ -247,7 +256,7 @@ export default function ForgotPassword() {
                 </div>
 
                 <div className="text-center">
-                    <Link href="/login" className="inline-flex items-center gap-2 text-xs text-text-secondary hover:text-white transition-colors">
+                    <Link href="/login" className="inline-flex items-center gap-2 text-xs text-muted hover:text-foreground transition-colors font-medium">
                         <ArrowLeft size={14} />
                         Back to Vault Login
                     </Link>

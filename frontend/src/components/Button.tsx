@@ -1,4 +1,6 @@
-import { ButtonHTMLAttributes, forwardRef } from 'react';
+'use client';
+
+import { forwardRef } from 'react';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import { motion, HTMLMotionProps } from 'framer-motion';
@@ -16,9 +18,9 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     ({ className, variant = 'primary', size = 'md', ...props }, ref) => {
         const variants = {
             primary: 'bg-gradient-premium neon-glow text-white shadow-xl hover:shadow-2xl hover:shadow-primary/30 active:scale-95 border border-white/10',
-            secondary: 'glass-panel text-white hover:bg-white/10 active:scale-95 border-white/20',
+            secondary: 'glass-panel text-foreground hover:border-primary/40 active:scale-95',
             danger: 'bg-red-500/10 text-red-500 hover:bg-red-500/20 border border-red-500/20',
-            ghost: 'bg-transparent text-zinc-400 hover:text-white hover:bg-white/5',
+            ghost: 'bg-transparent text-muted hover:text-foreground hover:bg-surface',
         };
 
         const sizes = {

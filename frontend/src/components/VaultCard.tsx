@@ -12,6 +12,20 @@ interface VaultCardProps {
     onDelete: (id: string) => void;
 }
 
+const siteGradient = (site: string = '') => {
+    const gradients = [
+        'from-indigo-500 to-violet-500',
+        'from-cyan-500 to-blue-500',
+        'from-fuchsia-500 to-pink-500',
+        'from-emerald-500 to-teal-500',
+        'from-amber-500 to-orange-500',
+        'from-rose-500 to-red-500',
+    ];
+    let hash = 0;
+    for (let i = 0; i < site.length; i++) hash = (hash * 31 + site.charCodeAt(i)) >>> 0;
+    return gradients[hash % gradients.length];
+};
+
 export const VaultCard = ({ entry, onDelete }: VaultCardProps) => {
     const [showPassword, setShowPassword] = useState(false);
     const [copied, setCopied] = useState(false);
@@ -62,39 +76,44 @@ export const VaultCard = ({ entry, onDelete }: VaultCardProps) => {
         setTimeout(() => setCopied(false), 2000);
     };
 
+    const strengthTone = strength.score >= 3 ? 'emerald' : strength.score >= 2 ? 'amber' : 'rose';
+
     return (
-        <motion.div 
+        <motion.div
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             whileHover={{ y: -4 }}
-            className="group relative bg-[#F4F8F9] border border-slate-200/80 p-6 rounded-[20px] shadow-[0_10px_30px_-10px_rgba(0,0,0,0.08)] hover:shadow-[0_20px_40px_-15px_rgba(0,0,0,0.12)] transition-all duration-300 overflow-hidden"
+            className="group relative bg-surface border border-border p-6 rounded-2xl shadow-card hover:shadow-card-hover transition-all duration-300 overflow-hidden"
         >
+            {/* Ambient top glow */}
+            <div className={`absolute -top-20 -right-20 w-48 h-48 bg-gradient-to-br ${siteGradient(entry.site)} opacity-[0.07] blur-3xl rounded-full pointer-events-none transition-opacity duration-300 group-hover:opacity-[0.14]`} />
+
             {/* Top Bar: Site Info & Actions */}
             <div className="flex justify-between items-start mb-5 relative z-10">
                 <div className="flex items-center gap-3.5">
-                    <div className="w-11 h-11 rounded-2xl bg-white border border-slate-200 flex items-center justify-center text-slate-800 shadow-sm">
+                    <div className={`w-11 h-11 rounded-2xl bg-gradient-to-br ${siteGradient(entry.site)} flex items-center justify-center text-white shadow-lg shrink-0`}>
                         <Globe size={20} />
                     </div>
-                    <div>
-                        <h3 className="text-slate-900 font-semibold tracking-tight text-base capitalize">{entry.site || 'Untitled Entry'}</h3>
-                        <p className="text-slate-500 text-xs flex items-center gap-1.5 mt-0.5 font-mono">
-                            <User size={12} className="text-slate-400" /> {entry.username || 'No Username'}
+                    <div className="min-w-0">
+                        <h3 className="text-foreground font-semibold tracking-tight text-base capitalize truncate">{entry.site || 'Untitled Entry'}</h3>
+                        <p className="text-muted text-xs flex items-center gap-1.5 mt-0.5 font-mono truncate">
+                            <User size={12} className="text-faint" /> {entry.username || 'No Username'}
                         </p>
                     </div>
                 </div>
 
                 <div className="flex items-center gap-1">
-                    <button 
+                    <button
                         onClick={handleShare}
                         disabled={sharing}
-                        className="p-2 rounded-xl text-slate-400 hover:text-slate-900 hover:bg-white transition-all"
+                        className="p-2 rounded-xl text-faint hover:text-primary hover:bg-primary/10 transition-all"
                         title="Zero-Knowledge One-Time Share"
                     >
-                        {sharing ? <Loader2 size={16} className="animate-spin text-purple-600" /> : <Share2 size={16} />}
+                        {sharing ? <Loader2 size={16} className="animate-spin text-primary" /> : <Share2 size={16} />}
                     </button>
-                    <button 
+                    <button
                         onClick={() => onDelete(entry._id)}
-                        className="p-2 rounded-xl text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-all"
+                        className="p-2 rounded-xl text-faint hover:text-rose-500 hover:bg-rose-500/10 transition-all"
                         title="Delete Entry"
                     >
                         <Trash2 size={16} />
@@ -104,15 +123,15 @@ export const VaultCard = ({ entry, onDelete }: VaultCardProps) => {
 
             {/* Password Row */}
             <div className="relative z-10 mt-3">
-                <div className="bg-white border border-slate-200 rounded-xl px-3.5 py-2 flex items-center justify-between shadow-sm">
-                    <span className="font-mono text-slate-800 text-xs tracking-wider overflow-hidden text-ellipsis whitespace-nowrap mr-2 select-all font-medium">
+                <div className="bg-elevated border border-border rounded-xl px-3.5 py-2.5 flex items-center justify-between shadow-inner">
+                    <span className="font-mono text-foreground text-xs tracking-wider overflow-hidden text-ellipsis whitespace-nowrap mr-2 select-all font-medium">
                         {displayText}
                     </span>
                     <div className="flex items-center gap-1">
                         <Button
                             variant="ghost"
                             size="sm"
-                            className="h-7 w-7 p-0 text-slate-400 hover:text-slate-900"
+                            className="h-7 w-7 p-0 text-faint hover:text-foreground"
                             onClick={() => setShowPassword(!showPassword)}
                             title={showPassword ? "Hide password" : "Show password"}
                         >
@@ -121,40 +140,53 @@ export const VaultCard = ({ entry, onDelete }: VaultCardProps) => {
                         <Button
                             variant="ghost"
                             size="sm"
-                            className="h-7 w-7 p-0 text-slate-400 hover:text-slate-900"
+                            className="h-7 w-7 p-0 text-faint hover:text-foreground"
                             onClick={copyToClipboard}
                             title="Copy Password"
                         >
-                            {copied ? <Check size={14} className="text-emerald-600" /> : <Copy size={14} />}
+                            {copied ? <Check size={14} className="text-emerald-500" /> : <Copy size={14} />}
                         </Button>
                     </div>
                 </div>
             </div>
 
             {/* Strength Bar & Security Badges */}
-            <div className="mt-5 pt-4 border-t border-slate-200/60 flex items-center justify-between relative z-10">
-                <div className="flex items-center gap-2">
-                    <div className={`px-2.5 py-0.5 rounded-full text-[10px] font-mono font-semibold uppercase tracking-wider flex items-center gap-1 border ${
-                        strength.score >= 3 ? 'bg-emerald-50 border-emerald-200 text-emerald-700' :
-                        strength.score >= 2 ? 'bg-amber-50 border-amber-200 text-amber-700' :
-                        'bg-rose-50 border-rose-200 text-rose-700'
+            <div className="mt-5 pt-4 border-t border-border/70 flex items-center justify-between relative z-10">
+                <div className="flex items-center gap-2.5">
+                    <div className={`px-2.5 py-1 rounded-full text-[10px] font-mono font-semibold uppercase tracking-wider flex items-center gap-1.5 border ${
+                        strengthTone === 'emerald' ? 'bg-emerald-500/10 border-emerald-500/25 text-emerald-600 dark:text-emerald-400' :
+                        strengthTone === 'amber' ? 'bg-amber-500/10 border-amber-500/25 text-amber-600 dark:text-amber-400' :
+                        'bg-rose-500/10 border-rose-500/25 text-rose-600 dark:text-rose-400'
                     }`}>
                         <Shield size={10} />
                         {strength.feedback}
                     </div>
+                    {/* Strength meter */}
+                    <div className="hidden sm:flex items-center gap-1">
+                        {[0, 1, 2, 3].map(i => (
+                            <span
+                                key={i}
+                                className={`w-1.5 h-3.5 rounded-full transition-all ${
+                                    i < strength.score
+                                        ? strengthTone === 'emerald' ? 'bg-emerald-500' : strengthTone === 'amber' ? 'bg-amber-500' : 'bg-rose-500'
+                                        : 'bg-border'
+                                }`}
+                            />
+                        ))}
+                    </div>
                 </div>
 
-                <button 
+                <button
                     onClick={handleCheckBreach}
                     disabled={checkingBreach || !!breachInfo}
-                    className={`px-3 py-1 rounded-full text-[10px] font-mono font-semibold uppercase tracking-wider transition-all flex items-center gap-1.5 border shadow-sm ${
-                        checkingBreach ? 'bg-slate-100 border-slate-200 text-slate-400' :
-                        breachInfo ? (breachInfo.count > 0 ? 'bg-rose-600 border-rose-600 text-white' : 'bg-emerald-100 border-emerald-300 text-emerald-800') :
-                        'bg-white border-slate-300 text-slate-700 hover:bg-slate-50'
+                    className={`px-3 py-1 rounded-full text-[10px] font-mono font-semibold uppercase tracking-wider transition-all flex items-center gap-1.5 border ${
+                        checkingBreach ? 'bg-surface border-border text-faint' :
+                        breachInfo ? (breachInfo.count > 0 ? 'bg-rose-600 border-rose-600 text-white' : 'bg-emerald-500/15 border-emerald-500/30 text-emerald-600 dark:text-emerald-400') :
+                        'bg-surface border-border text-muted hover:border-primary/40 hover:text-foreground'
                     }`}
                 >
-                    {checkingBreach ? <Loader2 size={10} className="animate-spin" /> : 
-                     breachInfo ? (breachInfo.count > 0 ? <AlertTriangle size={10} /> : <ShieldCheck size={10} />) : 
+                    {checkingBreach ? <Loader2 size={10} className="animate-spin" /> :
+                     breachInfo ? (breachInfo.count > 0 ? <AlertTriangle size={10} /> : <ShieldCheck size={10} />) :
                      <Sparkles size={10} />}
                     {breachInfo ? (breachInfo.count > 0 ? `${breachInfo.count} Leaks` : 'Secure') : 'Check Breach'}
                 </button>
@@ -163,23 +195,23 @@ export const VaultCard = ({ entry, onDelete }: VaultCardProps) => {
             {/* One-Time Share Link Reveal Overlay */}
             <AnimatePresence>
                 {shareUrl && (
-                    <motion.div 
+                    <motion.div
                         initial={{ opacity: 0, height: 0 }}
                         animate={{ opacity: 1, height: 'auto' }}
                         exit={{ opacity: 0, height: 0 }}
-                        className="mt-4 p-3.5 bg-purple-50 border border-purple-200 rounded-xl relative overflow-hidden z-10"
+                        className="mt-4 p-3.5 bg-primary/10 border border-primary/25 rounded-xl relative overflow-hidden z-10"
                     >
                         <div className="flex items-center justify-between mb-2">
-                            <span className="text-[10px] font-mono font-semibold uppercase tracking-wider text-purple-700 flex items-center gap-1.5">
-                                <AlertTriangle size={12} className="text-purple-600" /> Self-Destruct Link Created
+                            <span className="text-[10px] font-mono font-semibold uppercase tracking-wider text-primary flex items-center gap-1.5">
+                                <AlertTriangle size={12} /> Self-Destruct Link Created
                             </span>
                         </div>
-                        <div className="flex items-center justify-between gap-2 bg-white p-2 rounded-lg border border-purple-200">
-                            <span className="text-[10px] font-mono text-slate-700 truncate flex-1">{shareUrl}</span>
-                            <button 
+                        <div className="flex items-center justify-between gap-2 bg-surface p-2 rounded-lg border border-border">
+                            <span className="text-[10px] font-mono text-muted truncate flex-1">{shareUrl}</span>
+                            <button
                                 onClick={copyShareUrl}
                                 className={`px-2.5 py-1 rounded-md text-[10px] font-mono font-semibold uppercase transition-all ${
-                                    shareCopied ? 'bg-emerald-600 text-white' : 'bg-slate-900 text-white hover:bg-slate-800'
+                                    shareCopied ? 'bg-emerald-600 text-white' : 'bg-primary text-white hover:opacity-90'
                                 }`}
                             >
                                 {shareCopied ? 'Copied' : 'Copy Link'}
