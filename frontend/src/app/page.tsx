@@ -65,18 +65,18 @@ export default function Landing() {
   ];
 
   return (
-    <div className="min-h-screen relative overflow-x-hidden bg-[#ffffff] text-[#192837] isolate">
-      {/* Background Video with GPU layer isolation */}
+    <div className="min-h-screen relative overflow-hidden bg-[#F2F2EE] text-[#192837] isolate">
+      {/* Background Video Layer */}
       <video
         autoPlay
         muted
         loop
         playsInline
-        className="absolute inset-0 z-0 w-full h-full object-cover [transform:translateZ(0)] [backface-visibility:hidden] will-change-transform"
+        className="absolute inset-0 z-0 w-full h-full object-cover scale-105"
         src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260606_131516_eca35265-ea66-4fbd-8d52-22aae6e1a503.mp4"
       />
-      {/* Anti-glitch Solid Mask Overlay */}
-      <div className="absolute inset-0 z-0 bg-white/20 pointer-events-none" />
+      {/* Silky Frosted Glass Mask Overlay to dissolve video compression pixel squares */}
+      <div className="absolute inset-0 z-0 bg-[#F2F2EE]/75 backdrop-blur-[24px] pointer-events-none" />
 
       {/* Navbar */}
       <nav className="relative z-20 max-w-[1280px] mx-auto px-5 sm:px-8 py-4 sm:py-5 flex justify-between items-center">
@@ -107,7 +107,7 @@ export default function Landing() {
             </button>
           </Link>
           <Link href="/login">
-            <button className="bg-[#F2F2EE] text-[#192837] text-sm font-semibold px-5 py-2.5 rounded-full hover:bg-[#E6E6E0] transition-all active:scale-95">
+            <button className="bg-[#FFFFFF] text-[#192837] text-sm font-semibold px-5 py-2.5 rounded-full hover:bg-[#E6E6E0] transition-all active:scale-95 border border-[#192837]/10">
               Sign In
             </button>
           </Link>
@@ -193,7 +193,7 @@ export default function Landing() {
                   </button>
                 </Link>
                 <Link href="/login" className="block w-full">
-                  <button className="w-full bg-[#F2F2EE] text-[#192837] py-3.5 rounded-full font-semibold text-[0.95rem]">
+                  <button className="w-full bg-[#FFFFFF] text-[#192837] py-3.5 rounded-full font-semibold text-[0.95rem] border border-[#192837]/10">
                     Sign In
                   </button>
                 </Link>
@@ -267,7 +267,7 @@ export default function Landing() {
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.5, duration: 0.6 }}
-          className="mt-20 max-w-4xl mx-auto bg-white/90 backdrop-blur-md border border-[#192837]/10 p-8 rounded-3xl shadow-xl text-left"
+          className="mt-20 max-w-4xl mx-auto bg-white/95 backdrop-blur-md border border-[#192837]/10 p-8 rounded-3xl shadow-xl text-left"
         >
           <div className="flex items-center justify-between mb-6 pb-4 border-b border-[#192837]/10">
             <div className="flex items-center gap-3">
