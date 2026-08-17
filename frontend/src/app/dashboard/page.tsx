@@ -1,18 +1,17 @@
 'use client';
 
 import { useState } from 'react';
-import { Plus, Search, LogOut, Key, Star, Zap, Eye, EyeOff, PlayCircle, Lock, ShieldCheck, LayoutGrid, ShieldAlert, Menu } from 'lucide-react';
+import { Plus, Search, LogOut, Key, Star, Zap, Eye, EyeOff, PlayCircle, Lock, ShieldCheck } from 'lucide-react';
 import { useVault } from '@/hooks/useVault';
 import { Button } from '@/components/Button';
 import { VaultCard } from '@/components/VaultCard';
 import { AddEntryModal } from '@/components/AddEntryModal';
-import { Logo } from '@/components/Logo';
-import { ThemeToggle } from '@/components/ThemeToggle';
 import api from '@/services/api';
 import { useRouter } from 'next/navigation';
 import { useCrypto } from '@/components/CryptoContext';
 import { UnlockVault } from '@/components/UnlockVault';
 import { SecurityDashboard } from '@/components/SecurityDashboard';
+import { Logo } from '@/components/Logo';
 import { motion } from 'framer-motion';
 
 export default function Dashboard() {
@@ -21,7 +20,6 @@ export default function Dashboard() {
     const [searchQuery, setSearchQuery] = useState('');
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [viewMode, setViewMode] = useState<'all' | 'security' | 'favorites'>('all');
-    const [sidebarOpen, setSidebarOpen] = useState(false);
     const router = useRouter();
 
     const filteredEntries = entries.filter((entry) => {
@@ -40,135 +38,116 @@ export default function Dashboard() {
         }
     };
 
-    const healthTone = vaultScore >= 80 ? 'text-emerald-500 border-emerald-500/25 bg-emerald-500/10' : vaultScore >= 50 ? 'text-amber-500 border-amber-500/25 bg-amber-500/10' : 'text-rose-500 border-rose-500/25 bg-rose-500/10';
-
-    const navItems = [
-        { key: 'all' as const, label: 'All Items', count: entries.length, icon: LayoutGrid, active: viewMode === 'all', activeCls: 'text-primary bg-primary/10 border-primary/25' },
-        { key: 'security' as const, label: 'Security Audit', count: null, icon: ShieldAlert, active: viewMode === 'security', activeCls: 'text-amber-500 bg-amber-500/10 border-amber-500/25' },
-        { key: 'favorites' as const, label: 'Favorites', count: entries.filter(e => e.favorite).length, icon: Star, active: viewMode === 'favorites', activeCls: 'text-fuchsia-500 bg-fuchsia-500/10 border-fuchsia-500/25' },
-    ];
-
-    const SidebarContent = (
-        <>
-            <Button
-                variant="primary"
-                className="mb-5 h-12 justify-start gap-2.5 font-semibold rounded-2xl w-full"
-                onClick={() => { setIsModalOpen(true); setSidebarOpen(false); }}
-            >
-                <Plus size={18} />
-                Add New Password
-            </Button>
-
-            <nav className="space-y-1.5">
-                {navItems.map(item => (
-                    <button
-                        key={item.key}
-                        onClick={() => setViewMode(item.key)}
-                        className={`w-full flex items-center justify-between gap-3 px-4 py-2.5 text-sm font-medium rounded-xl border transition-all ${
-                            item.active ? item.activeCls : 'border-transparent text-muted hover:text-foreground hover:bg-surface'
-                        }`}
-                    >
-                        <span className="flex items-center gap-3">
-                            <item.icon size={16} />
-                            {item.label}
-                        </span>
-                        {item.count !== null && (
-                            <span className={`text-[10px] font-mono font-bold px-1.5 py-0.5 rounded-md ${
-                                item.active ? 'bg-background/40' : 'bg-surface border border-border text-faint'
-                            }`}>
-                                {item.count}
-                            </span>
-                        )}
-                    </button>
-                ))}
-            </nav>
-
-            {/* Crypto status card */}
-            <div className="mt-auto p-4 rounded-2xl bg-elevated border border-border space-y-2.5 relative overflow-hidden">
-                <div className="absolute -top-10 -right-10 w-28 h-28 bg-primary/10 blur-2xl rounded-full pointer-events-none" />
-                <div className="flex justify-between items-center relative z-10">
-                    <p className="text-[11px] font-mono font-bold text-foreground uppercase tracking-wider flex items-center gap-1.5">
-                        <ShieldCheck size={14} className="text-emerald-500" /> Web Crypto Active
-                    </p>
-                    <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                </div>
-                <p className="text-[11px] text-muted leading-relaxed relative z-10">
-                    600K PBKDF2 iterations &amp; AES-256-GCM enforced. Keys live in memory only.
-                </p>
-            </div>
-        </>
-    );
-
     return (
-        <div className="min-h-screen bg-background text-foreground flex flex-col">
-            {/* ─────────── HEADER ─────────── */}
-            <header className="sticky top-0 z-40 w-full border-b border-border bg-background/85 backdrop-blur-xl">
-                <div className="px-4 md:px-6 h-16 flex items-center justify-between gap-4">
-                    <div className="flex items-center gap-3">
-                        <button
-                            onClick={() => setSidebarOpen(!sidebarOpen)}
-                            className="lg:hidden p-2 rounded-xl border border-border text-muted hover:text-foreground transition-colors"
-                            aria-label="Toggle sidebar"
-                        >
-                            <Menu size={18} />
-                        </button>
-                        <Logo />
+        <div className="min-h-screen bg-white text-[#192837] flex flex-col font-sans selection:bg-[#7342E2]/20">
+            {/* Portal Navbar Header */}
+            <header className="sticky top-0 z-40 w-full border-b border-[#192837]/10 bg-white/90 backdrop-blur-md px-6 py-4 flex items-center justify-between shadow-xs">
+                <div className="flex items-center gap-3">
+                    <Logo size={32} color="#192837" />
+                    <div>
+                        <h1 className="font-heading text-xl font-bold tracking-tight text-[#192837]">Alyra Lock</h1>
+                        <p className="text-[10px] text-[#192837]/60 font-mono tracking-widest uppercase">Zero-Knowledge Hardware Vault</p>
                     </div>
+                </div>
 
-                    <div className="flex items-center gap-3">
-                        {/* Vault Health Badge */}
-                        {!loading && !isLocked && (
-                            <div className={`hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full border font-mono text-xs font-semibold ${healthTone}`}>
-                                <Zap size={14} className="fill-current" />
-                                <span>{vaultScore}% Health</span>
-                            </div>
-                        )}
+                <div className="flex items-center gap-4">
+                    {/* Vault Health Badge */}
+                    {!loading && !isLocked && (
+                        <div className={`hidden sm:flex items-center gap-2 px-3.5 py-1.5 rounded-full border font-mono text-xs font-semibold ${
+                            vaultScore >= 80 ? 'text-emerald-800 border-emerald-300 bg-emerald-50' :
+                            vaultScore >= 50 ? 'text-amber-800 border-amber-300 bg-amber-50' :
+                            'text-rose-800 border-rose-300 bg-rose-50'
+                        }`}>
+                            <Zap size={14} className="fill-current" />
+                            <span>{vaultScore}% Vault Health</span>
+                        </div>
+                    )}
 
-                        {/* Active Guard Status */}
-                        {!loading && !isLocked && (
-                            <div className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-full border border-emerald-500/25 bg-emerald-500/10 text-emerald-500 font-mono text-xs font-semibold uppercase tracking-wider">
-                                <div className="w-2 h-2 rounded-full bg-emerald-500 animate-ping" />
-                                <span>Guard Active</span>
-                            </div>
-                        )}
+                    {/* Active Guard Status */}
+                    {!loading && !isLocked && (
+                        <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-emerald-300 bg-emerald-50 text-emerald-800 font-mono text-xs font-semibold uppercase tracking-wider">
+                            <div className="w-2 h-2 rounded-full bg-emerald-500 animate-ping" />
+                            <span>Guard Active</span>
+                        </div>
+                    )}
 
-                        <ThemeToggle />
-
-                        <Button variant="ghost" size="sm" className="text-muted hover:text-foreground px-3 font-mono text-xs font-semibold" onClick={handleLogout}>
-                            <LogOut size={16} />
-                            <span className="hidden sm:inline">Logout</span>
-                        </Button>
-                    </div>
+                    <button 
+                        onClick={handleLogout}
+                        className="text-[#192837]/70 hover:text-[#192837] px-3.5 py-2 rounded-full font-mono text-xs font-semibold flex items-center gap-2 border border-[#192837]/10 bg-[#F2F2EE] hover:bg-[#E6E6E0] transition-all"
+                    >
+                        <LogOut size={16} />
+                        <span>Logout</span>
+                    </button>
                 </div>
             </header>
 
-            {/* Mobile sidebar drawer */}
-            {sidebarOpen && (
-                <div className="fixed inset-0 z-40 lg:hidden">
-                    <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setSidebarOpen(false)} />
-                    <div className="absolute left-0 top-0 bottom-0 w-72 bg-background border-r border-border p-5 flex flex-col overflow-y-auto">
-                        {SidebarContent}
-                    </div>
-                </div>
-            )}
+            {/* Main Application Container */}
+            <div className="flex-1 flex max-w-[1280px] mx-auto w-full px-6 py-8 gap-8">
+                {/* Sidebar Navigation */}
+                <aside className="w-64 hidden md:flex flex-col gap-3">
+                    <button 
+                        onClick={() => setIsModalOpen(true)}
+                        className="mb-4 h-12 w-full bg-[#7342E2] hover:bg-[#6836D1] text-white font-semibold rounded-full shadow-[0_4px_24px_rgba(115,66,226,0.28)] flex items-center justify-center gap-2.5 transition-all active:scale-95 text-sm"
+                    >
+                        <Plus size={18} />
+                        Add New Password
+                    </button>
 
-            {/* ─────────── MAIN ─────────── */}
-            <div className="flex-1 flex max-w-[1200px] mx-auto w-full px-4 md:px-6 py-8 gap-8">
-                {/* Desktop Sidebar */}
-                <aside className="w-64 hidden lg:flex flex-col gap-3 shrink-0">
-                    {SidebarContent}
+                    <nav className="space-y-1.5">
+                        <button 
+                            className={`w-full flex items-center gap-3 px-4 py-3 text-xs font-mono font-semibold tracking-wider rounded-2xl transition-all ${
+                                viewMode === 'all' ? 'bg-[#7342E2]/10 border border-[#7342E2]/30 text-[#7342E2] font-bold' : 'text-[#192837]/70 hover:text-[#192837] hover:bg-[#F2F2EE]'
+                            }`}
+                            onClick={() => setViewMode('all')}
+                        >
+                            <Key size={16} className={viewMode === 'all' ? "text-[#7342E2]" : ""} />
+                            All Vault Items ({entries.length})
+                        </button>
+                        
+                        <button 
+                            className={`w-full flex items-center gap-3 px-4 py-3 text-xs font-mono font-semibold tracking-wider rounded-2xl transition-all ${
+                                viewMode === 'security' ? 'bg-amber-100 border border-amber-300 text-amber-900 font-bold' : 'text-[#192837]/70 hover:text-[#192837] hover:bg-[#F2F2EE]'
+                            }`}
+                            onClick={() => setViewMode('security')}
+                        >
+                            <Zap size={16} className={viewMode === 'security' ? "text-amber-600" : ""} />
+                            Security Audit
+                        </button>
+
+                        <button 
+                            className={`w-full flex items-center gap-3 px-4 py-3 text-xs font-mono font-semibold tracking-wider rounded-2xl transition-all ${
+                                viewMode === 'favorites' ? 'bg-purple-100 border border-purple-300 text-purple-900 font-bold' : 'text-[#192837]/70 hover:text-[#192837] hover:bg-[#F2F2EE]'
+                            }`}
+                            onClick={() => setViewMode('favorites')}
+                        >
+                            <Star size={16} className={viewMode === 'favorites' ? "text-purple-600" : ""} />
+                            Favorites
+                        </button>
+                    </nav>
+
+                    {/* Security Audit Badge Panel */}
+                    <div className="mt-auto p-4 rounded-2xl bg-[#F2F2EE] border border-[#192837]/10 space-y-2">
+                        <div className="flex justify-between items-center">
+                            <p className="text-[11px] font-mono font-bold text-[#192837] uppercase tracking-wider flex items-center gap-1.5">
+                                <ShieldCheck size={14} className="text-emerald-600" /> Web Crypto Active
+                            </p>
+                        </div>
+                        <p className="text-[11px] text-[#192837]/70 leading-relaxed font-body">
+                            600K PBKDF2 iterations &amp; AES-256-GCM verification enforced.
+                        </p>
+                    </div>
                 </aside>
 
                 {/* Main Content Area */}
-                <main className="flex-1 min-w-0 space-y-6">
-                    {/* Command Toolbar */}
-                    <div className="bg-surface border border-border p-3 rounded-2xl flex flex-col sm:flex-row gap-3 justify-between items-center shadow-card">
-                        <div className="relative w-full sm:w-96">
-                            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-faint" size={16} />
+                <main className="flex-1 space-y-6">
+                    {/* Command Search Toolbar */}
+                    <div className="bg-[#F2F2EE] border border-[#192837]/10 p-3 rounded-2xl flex flex-col sm:flex-row gap-3 justify-between items-center shadow-xs">
+                        <div className="relative w-full sm:w-80">
+                            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#192837]/40" size={16} />
                             <input
                                 type="text"
                                 placeholder="Search secrets..."
-                                className="w-full bg-elevated border border-border rounded-xl pl-10 pr-4 py-2.5 text-xs font-mono text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/30 transition-all shadow-inner placeholder:text-faint"
+                                className="w-full bg-white border border-[#192837]/15 rounded-xl pl-10 pr-4 py-2 text-xs font-mono text-[#192837] outline-none focus:border-[#7342E2] transition-all"
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
                             />
@@ -177,7 +156,7 @@ export default function Dashboard() {
                         <div className="flex items-center gap-2 w-full sm:w-auto justify-end">
                             <button
                                 onClick={seedDemoEntries}
-                                className="flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-mono font-semibold uppercase tracking-wider text-muted border border-border bg-elevated hover:text-foreground hover:border-primary/40 transition-all active:scale-95 shadow-card"
+                                className="flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-mono font-semibold uppercase tracking-wider text-[#192837] border border-[#192837]/15 bg-white hover:bg-slate-50 transition-all active:scale-95 shadow-xs"
                                 title="Seed Demo Data"
                             >
                                 <PlayCircle size={14} />
@@ -186,10 +165,10 @@ export default function Dashboard() {
 
                             <button
                                 onClick={() => setStealthMode(!stealthMode)}
-                                className={`flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-mono font-semibold uppercase tracking-wider transition-all border shadow-card ${
-                                    stealthMode
-                                        ? 'bg-rose-600 border-rose-600 text-white shadow-glow'
-                                        : 'bg-elevated border-border text-muted hover:text-foreground hover:border-primary/40'
+                                className={`flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-mono font-semibold uppercase tracking-wider transition-all border shadow-xs ${
+                                    stealthMode 
+                                        ? 'bg-rose-600 border-rose-600 text-white' 
+                                        : 'bg-white border-[#192837]/15 text-[#192837] hover:bg-slate-50'
                                 }`}
                                 title={stealthMode ? "Stealth Panic ON" : "Stealth Panic OFF"}
                             >
@@ -209,38 +188,34 @@ export default function Dashboard() {
                         <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
                             {loading ? (
                                 Array.from({ length: 4 }).map((_, i) => (
-                                    <div key={i} className="h-44 bg-surface border border-border rounded-3xl animate-pulse shadow-card" />
+                                    <div key={i} className="h-40 bg-[#F2F2EE] border border-[#192837]/10 rounded-[24px] animate-pulse" />
                                 ))
                             ) : filteredEntries.length > 0 ? (
                                 filteredEntries.map((entry) => (
                                     <VaultCard key={entry._id} entry={entry} onDelete={deleteEntry} />
                                 ))
                             ) : (
-                                <motion.div
+                                <motion.div 
                                     initial={{ opacity: 0, scale: 0.95 }}
                                     animate={{ opacity: 1, scale: 1 }}
-                                    className="col-span-full py-20 flex flex-col items-center justify-center text-center bg-surface border border-border rounded-3xl p-8 space-y-5 shadow-card relative overflow-hidden"
+                                    className="col-span-full py-20 flex flex-col items-center justify-center text-center bg-[#F2F2EE] border border-[#192837]/10 rounded-[24px] p-8 space-y-4 shadow-xs"
                                 >
-                                    <div className="absolute -top-20 left-1/2 -translate-x-1/2 w-72 h-72 bg-primary/10 blur-3xl rounded-full pointer-events-none" />
-                                    <div className="w-16 h-16 rounded-2xl bg-gradient-premium neon-glow flex items-center justify-center text-white shadow-lg relative z-10">
+                                    <div className="w-16 h-16 rounded-2xl bg-white border border-[#192837]/10 flex items-center justify-center text-[#192837] shadow-sm">
                                         <Lock size={28} />
                                     </div>
-                                    <div className="space-y-1.5 max-w-sm relative z-10">
-                                        <h3 className="text-xl font-bold text-foreground tracking-tight">
-                                            {viewMode === 'favorites' ? 'No favorites yet' : 'Your vault is empty'}
-                                        </h3>
-                                        <p className="text-muted text-xs leading-relaxed">
-                                            {viewMode === 'favorites'
-                                                ? 'Starred credentials will appear here for one-tap access.'
-                                                : 'Store and manage passwords with hardware-level Zero-Knowledge client-side encryption.'}
+                                    <div className="space-y-1 max-w-sm">
+                                        <h3 className="font-heading text-xl font-bold text-[#192837] tracking-tight">Your vault is empty</h3>
+                                        <p className="text-[#192837]/70 text-xs leading-relaxed font-body">
+                                            Store and manage passwords with hardware-level Zero-Knowledge client-side encryption.
                                         </p>
                                     </div>
-                                    {viewMode !== 'favorites' && (
-                                        <Button variant="primary" size="sm" onClick={() => setIsModalOpen(true)} className="px-6 font-semibold relative z-10">
-                                            <Plus size={16} />
-                                            Add First Password
-                                        </Button>
-                                    )}
+                                    <button 
+                                        onClick={() => setIsModalOpen(true)}
+                                        className="px-6 py-2.5 font-semibold bg-[#7342E2] hover:bg-[#6836D1] text-white text-xs rounded-full shadow-md flex items-center gap-1.5"
+                                    >
+                                        <Plus size={16} />
+                                        Add First Password
+                                    </button>
                                 </motion.div>
                             )}
                         </div>

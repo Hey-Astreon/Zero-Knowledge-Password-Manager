@@ -1,11 +1,10 @@
 'use client';
 
 import { useState } from 'react';
-import { Shield, Key, RefreshCw, ArrowLeft, AlertTriangle } from 'lucide-react';
+import { Key, RefreshCw, ArrowLeft, AlertTriangle } from 'lucide-react';
 import { Button } from '@/components/Button';
 import { Input } from '@/components/Input';
 import { Logo } from '@/components/Logo';
-import { ThemeToggle } from '@/components/ThemeToggle';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
@@ -37,14 +36,11 @@ export default function ForgotPassword() {
         setSuccess(null);
 
         try {
-            // Generate new vault salt for the new master key
             const newSaltBytes = generateSalt();
             const newVaultSalt = encodeBinary(newSaltBytes.buffer as ArrayBuffer);
-
-            // Derive new authHash client-side
             const newAuthHash = await deriveAuthHash(formData.newPassword, newVaultSalt);
 
-            const response = await api.post('/auth/reset-password', {
+            await api.post('/auth/reset-password', {
                 email: formData.email,
                 recoveryKey: formData.recoveryKey.trim(),
                 newAuthHash,
@@ -94,18 +90,7 @@ export default function ForgotPassword() {
     };
 
     return (
-        <div className="min-h-screen bg-background text-foreground flex flex-col items-center justify-center p-6 relative overflow-hidden">
-            {/* Backdrop */}
-            <div className="absolute inset-0 bg-grid opacity-50" />
-            <div className="bg-orb w-[500px] h-[500px] top-[-180px] left-1/2 -translate-x-1/2 bg-primary/10" />
-            <div className="bg-orb w-[400px] h-[400px] bottom-[-160px] right-[-120px] bg-amber-500/10" />
-
-            {/* Top bar */}
-            <div className="absolute top-0 inset-x-0 z-20 flex items-center justify-between px-6 py-4">
-                <Logo size="sm" />
-                <ThemeToggle />
-            </div>
-
+        <div className="min-h-screen bg-white text-[#192837] flex flex-col items-center justify-center p-6 font-sans selection:bg-[#7342E2]/20">
             <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -113,22 +98,22 @@ export default function ForgotPassword() {
             >
                 {/* Header */}
                 <div className="text-center space-y-3">
-                    <div className="inline-flex w-14 h-14 rounded-2xl bg-gradient-premium neon-glow items-center justify-center text-white shadow-lg">
-                        <Shield size={26} />
+                    <div className="inline-flex items-center justify-center">
+                        <Logo size={44} color="#192837" />
                     </div>
                     <div>
-                        <h1 className="text-3xl font-extrabold text-foreground tracking-tight">Account Recovery</h1>
-                        <p className="text-muted text-sm">Zero-Knowledge Master Key Reset</p>
+                        <h1 className="font-heading text-3xl font-bold text-[#192837] tracking-tight">Account Recovery</h1>
+                        <p className="text-[#192837]/60 text-xs font-mono uppercase tracking-widest mt-1">Zero-Knowledge Master Key Reset</p>
                     </div>
                 </div>
 
                 {/* Mode Selector Tabs */}
-                <div className="flex p-1.5 bg-elevated border border-border rounded-2xl">
+                <div className="flex p-1.5 bg-[#F2F2EE] border border-[#192837]/10 rounded-2xl">
                     <button
                         type="button"
                         onClick={() => { setMode('recovery_key'); setError(null); }}
                         className={`flex-1 py-2.5 text-xs font-bold rounded-xl transition-all flex items-center justify-center gap-2 ${
-                            mode === 'recovery_key' ? 'bg-gradient-premium neon-glow text-white' : 'text-muted hover:text-foreground'
+                            mode === 'recovery_key' ? 'bg-[#7342E2] text-white shadow-md' : 'text-[#192837]/70 hover:text-[#192837]'
                         }`}
                     >
                         <Key size={14} />
@@ -138,7 +123,7 @@ export default function ForgotPassword() {
                         type="button"
                         onClick={() => { setMode('account_reset'); setError(null); }}
                         className={`flex-1 py-2.5 text-xs font-bold rounded-xl transition-all flex items-center justify-center gap-2 ${
-                            mode === 'account_reset' ? 'bg-rose-600 text-white shadow-glow' : 'text-muted hover:text-foreground'
+                            mode === 'account_reset' ? 'bg-rose-600 text-white shadow-md' : 'text-[#192837]/70 hover:text-[#192837]'
                         }`}
                     >
                         <RefreshCw size={14} />
@@ -147,9 +132,9 @@ export default function ForgotPassword() {
                 </div>
 
                 {/* Card */}
-                <div className="glass-panel p-8 rounded-3xl">
+                <div className="bg-[#F2F2EE] border border-[#192837]/10 p-8 rounded-[24px] shadow-[0_10px_30px_-10px_rgba(25,40,55,0.08)]">
                     {mode === 'recovery_key' ? (
-                        <form onSubmit={handleRecoveryReset} className="space-y-5">
+                        <form onSubmit={handleRecoveryReset} className="space-y-4">
                             <Input
                                 label="Email Address"
                                 type="email"
@@ -184,29 +169,29 @@ export default function ForgotPassword() {
                             />
 
                             {error && (
-                                <div className="p-3 bg-red-500/10 border border-red-500/20 rounded-lg">
-                                    <p className="text-xs text-red-500 text-center">{error}</p>
+                                <div className="p-3 bg-rose-100 border border-rose-300 rounded-xl">
+                                    <p className="text-xs text-rose-800 font-mono text-center font-semibold">{error}</p>
                                 </div>
                             )}
 
                             {success && (
-                                <div className="p-3 bg-emerald-500/10 border border-emerald-500/20 rounded-lg">
-                                    <p className="text-xs text-emerald-500 text-center">{success}</p>
+                                <div className="p-3 bg-emerald-100 border border-emerald-300 rounded-xl">
+                                    <p className="text-xs text-emerald-800 font-mono text-center font-semibold">{success}</p>
                                 </div>
                             )}
 
-                            <Button type="submit" className="w-full h-12" disabled={loading}>
+                            <button type="submit" className="w-full h-11 text-sm font-semibold bg-[#7342E2] hover:bg-[#6836D1] text-white rounded-full shadow-md transition-all active:scale-95" disabled={loading}>
                                 {loading ? 'Resetting Key...' : 'Reset Master Password'}
-                            </Button>
+                            </button>
                         </form>
                     ) : (
-                        <form onSubmit={handleAccountReset} className="space-y-5">
-                            <div className="p-4 bg-rose-500/10 border border-rose-500/20 rounded-xl space-y-2">
-                                <div className="flex items-center gap-2 text-rose-500 font-bold text-xs">
+                        <form onSubmit={handleAccountReset} className="space-y-4">
+                            <div className="p-4 bg-rose-100 border border-rose-300 rounded-xl space-y-1.5">
+                                <div className="flex items-center gap-2 text-rose-800 font-bold text-xs">
                                     <AlertTriangle size={16} />
                                     <span>Zero-Knowledge Protection Warning</span>
                                 </div>
-                                <p className="text-[11px] text-muted leading-relaxed">
+                                <p className="text-[11px] text-rose-900/80 leading-relaxed font-body">
                                     Without your Recovery Key, old encrypted vault data cannot be recovered. Resetting your account will wipe old vault items and create a clean master key.
                                 </p>
                             </div>
@@ -237,26 +222,26 @@ export default function ForgotPassword() {
                             />
 
                             {error && (
-                                <div className="p-3 bg-red-500/10 border border-red-500/20 rounded-lg">
-                                    <p className="text-xs text-red-500 text-center">{error}</p>
+                                <div className="p-3 bg-rose-100 border border-rose-300 rounded-xl">
+                                    <p className="text-xs text-rose-800 font-mono text-center font-semibold">{error}</p>
                                 </div>
                             )}
 
                             {success && (
-                                <div className="p-3 bg-emerald-500/10 border border-emerald-500/20 rounded-lg">
-                                    <p className="text-xs text-emerald-500 text-center">{success}</p>
+                                <div className="p-3 bg-emerald-100 border border-emerald-300 rounded-xl">
+                                    <p className="text-xs text-emerald-800 font-mono text-center font-semibold">{success}</p>
                                 </div>
                             )}
 
-                            <Button type="submit" className="w-full h-12 bg-rose-600 hover:bg-rose-500 border-rose-600 text-white shadow-glow" disabled={loading}>
+                            <button type="submit" className="w-full h-11 text-sm font-semibold bg-rose-600 hover:bg-rose-700 text-white rounded-full shadow-md transition-all active:scale-95" disabled={loading}>
                                 {loading ? 'Wiping & Resetting...' : 'Confirm Account Reset'}
-                            </Button>
+                            </button>
                         </form>
                     )}
                 </div>
 
                 <div className="text-center">
-                    <Link href="/login" className="inline-flex items-center gap-2 text-xs text-muted hover:text-foreground transition-colors font-medium">
+                    <Link href="/login" className="inline-flex items-center gap-2 text-xs text-[#192837]/70 hover:text-[#192837] font-semibold transition-colors">
                         <ArrowLeft size={14} />
                         Back to Vault Login
                     </Link>

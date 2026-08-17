@@ -1,29 +1,22 @@
-'use client';
-
-import { Shield } from 'lucide-react';
+import React from 'react';
 
 interface LogoProps {
-    size?: 'sm' | 'md';
-    href?: string;
+    className?: string;
+    size?: number;
+    color?: string;
 }
 
-export const Logo = ({ size = 'md', href = '/' }: LogoProps) => {
-    const box = size === 'sm' ? 'w-9 h-9 rounded-xl' : 'w-11 h-11 rounded-2xl';
-    const icon = size === 'sm' ? 18 : 22;
-
+export const Logo: React.FC<LogoProps> = ({ className = '', size = 32, color = '#192837' }) => {
     return (
-        <a href={href} className="flex items-center gap-3 group">
-            <div className={`${box} bg-gradient-premium neon-glow flex items-center justify-center text-white shrink-0 transition-transform duration-300 group-hover:scale-105`}>
-                <Shield size={icon} />
-            </div>
-            <div className="leading-tight">
-                <span className={`font-bold tracking-tight text-foreground ${size === 'sm' ? 'text-lg' : 'text-xl'}`}>
-                    Alyra<span className="text-gradient">Lock</span>
-                </span>
-                <p className="text-[9px] text-faint font-mono uppercase tracking-[0.18em]">
-                    Zero-Knowledge Vault
-                </p>
-            </div>
-        </a>
+        <svg 
+            width={size} 
+            height={size} 
+            viewBox="0 0 256 256" 
+            fill={color} 
+            className={className}
+            xmlns="http://www.w3.org/2000/svg"
+        >
+            <path d="M 64 128 L 64.5 128 L 32 95 L 0 64 L 0 0 L 64 0 L 128 64 L 128 64.5 L 161 32 L 192 0 L 256 0 L 256 64 L 192 128 L 128 128 L 128 192 L 96 223 L 63.5 256 L 0 256 L 0 192 Z M 256 192 L 224 223 L 191.5 256 L 128 256 L 128 192 L 192 128 L 256 128 Z" />
+        </svg>
     );
 };

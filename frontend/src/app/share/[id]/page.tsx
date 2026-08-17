@@ -2,10 +2,8 @@
 
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
-import { Shield, AlertTriangle, CheckCircle, Loader2, Copy, Check, Lock } from 'lucide-react';
-import { Button } from '@/components/Button';
+import { Shield, AlertTriangle, Loader2, Copy, Check, Lock } from 'lucide-react';
 import { Logo } from '@/components/Logo';
-import { ThemeToggle } from '@/components/ThemeToggle';
 import { decryptShare } from '@/utils/sharing';
 import { motion } from 'framer-motion';
 
@@ -46,72 +44,67 @@ export default function SharePage() {
     };
 
     return (
-        <div className="min-h-screen bg-background text-foreground flex flex-col items-center justify-center p-6 relative overflow-hidden">
-            {/* Backdrop */}
-            <div className="absolute inset-0 bg-grid opacity-50" />
-            <div className="bg-orb w-[600px] h-[600px] top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-indigo-600/10" />
-
+        <div className="min-h-screen bg-white text-[#192837] flex flex-col items-center justify-center p-6 relative overflow-hidden font-sans selection:bg-[#7342E2]/20">
             {/* Top bar */}
-            <div className="absolute top-0 inset-x-0 z-20 flex items-center justify-between px-6 py-4">
-                <Logo size="sm" />
-                <ThemeToggle />
+            <div className="absolute top-0 inset-x-0 z-20 flex items-center justify-between px-8 py-6">
+                <Logo size={32} color="#192837" />
             </div>
 
             <motion.div
                 initial={{ opacity: 0, y: 16 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="w-full max-w-md bg-surface border border-border rounded-3xl p-8 shadow-card relative z-10 space-y-8"
+                className="w-full max-w-md bg-[#F2F2EE] border border-[#192837]/10 rounded-[24px] p-8 shadow-[0_10px_30px_-10px_rgba(25,40,55,0.08)] relative z-10 space-y-8"
             >
                 <div className="flex flex-col items-center text-center space-y-4">
-                    <div className="w-16 h-16 rounded-2xl bg-gradient-premium neon-glow flex items-center justify-center shadow-lg">
-                        <Shield size={32} className="text-white" />
+                    <div className="w-16 h-16 rounded-2xl bg-[#7342E2]/10 border border-[#7342E2]/30 flex items-center justify-center text-[#7342E2] shadow-sm">
+                        <Shield size={32} />
                     </div>
                     <div>
-                        <h1 className="text-2xl font-bold tracking-tight">Alyra Lock Secure Share</h1>
-                        <p className="text-muted text-xs mt-1 uppercase tracking-widest font-mono">Zero-Knowledge Encrypted</p>
+                        <h1 className="font-heading text-2xl font-bold tracking-tight text-[#192837]">Alyra Lock Secure Share</h1>
+                        <p className="text-[#192837]/60 text-xs mt-1 uppercase tracking-widest font-mono">Zero-Knowledge One-Time Share</p>
                     </div>
                 </div>
 
                 {loading ? (
                     <div className="py-12 flex flex-col items-center gap-4">
-                        <Loader2 className="animate-spin text-primary" size={32} />
-                        <p className="text-muted text-sm">Decrypting secure payload...</p>
+                        <Loader2 className="animate-spin text-[#7342E2]" size={32} />
+                        <p className="text-[#192837]/70 text-xs font-mono">Decrypting secure payload...</p>
                     </div>
                 ) : error ? (
-                    <div className="bg-rose-500/10 border border-rose-500/25 rounded-2xl p-6 flex flex-col items-center gap-4 text-center">
-                        <AlertTriangle className="text-rose-500" size={32} />
+                    <div className="bg-rose-100 border border-rose-300 rounded-2xl p-6 flex flex-col items-center gap-4 text-center">
+                        <AlertTriangle className="text-rose-800" size={32} />
                         <div>
-                            <h3 className="text-foreground font-semibold italic">Access Terminated</h3>
-                            <p className="text-muted text-xs mt-2 leading-relaxed">
+                            <h3 className="text-rose-900 font-bold">Access Terminated</h3>
+                            <p className="text-rose-800 text-xs mt-2 leading-relaxed">
                                 {error} Shared links are one-time use or expire after 10 minutes.
                             </p>
                         </div>
                     </div>
                 ) : (
                     <div className="space-y-6">
-                        <div className="bg-elevated border border-border rounded-2xl p-6 space-y-4 shadow-inner">
+                        <div className="bg-white border border-[#192837]/10 rounded-2xl p-6 space-y-4 shadow-sm">
                             <div>
-                                <p className="text-[10px] text-faint uppercase tracking-widest font-bold mb-1">Service</p>
-                                <p className="text-lg font-bold text-foreground capitalize">{decrypted.site}</p>
+                                <p className="text-[10px] text-[#192837]/60 uppercase tracking-widest font-bold mb-1 font-mono">Service</p>
+                                <p className="text-lg font-bold text-[#192837] capitalize font-heading">{decrypted.site}</p>
                             </div>
 
                             <div>
-                                <p className="text-[10px] text-faint uppercase tracking-widest font-bold mb-1">Username</p>
-                                <p className="text-sm font-medium text-muted">{decrypted.username}</p>
+                                <p className="text-[10px] text-[#192837]/60 uppercase tracking-widest font-bold mb-1 font-mono">Username</p>
+                                <p className="text-sm font-medium text-[#192837]/80 font-mono">{decrypted.username}</p>
                             </div>
 
-                            <div className="pt-4 border-t border-border">
-                                <p className="text-[10px] text-faint uppercase tracking-widest font-bold mb-2">Decrypted Password</p>
-                                <div className="flex items-center justify-between bg-background px-4 py-3 rounded-xl border border-border">
-                                    <span className="font-mono text-primary text-lg tracking-wider select-all break-all">{decrypted.password}</span>
-                                    <Button variant="ghost" size="sm" onClick={copyPass} className="h-10 w-10 p-0 text-faint hover:text-foreground shrink-0 ml-2">
-                                        {copied ? <Check size={18} className="text-emerald-500" /> : <Copy size={18} />}
-                                    </Button>
+                            <div className="pt-4 border-t border-[#192837]/10">
+                                <p className="text-[10px] text-[#192837]/60 uppercase tracking-widest font-bold mb-2 font-mono">Decrypted Password</p>
+                                <div className="flex items-center justify-between bg-[#F2F2EE] px-4 py-3 rounded-xl border border-[#192837]/10">
+                                    <span className="font-mono text-[#7342E2] text-lg tracking-wider select-all break-all font-bold">{decrypted.password}</span>
+                                    <button onClick={copyPass} className="h-9 w-9 rounded-xl bg-white border border-[#192837]/10 flex items-center justify-center text-[#192837] hover:text-[#7342E2] shrink-0 ml-2">
+                                        {copied ? <Check size={18} className="text-emerald-600" /> : <Copy size={18} />}
+                                    </button>
                                 </div>
                             </div>
                         </div>
 
-                        <div className="flex items-center gap-3 p-4 bg-amber-500/10 border border-amber-500/25 rounded-xl text-amber-500 text-[10px] uppercase font-bold tracking-wider leading-relaxed">
+                        <div className="flex items-center gap-3 p-4 bg-amber-100 border border-amber-300 rounded-xl text-amber-900 text-[10px] uppercase font-bold tracking-wider leading-relaxed font-mono">
                             <Lock size={16} className="shrink-0" />
                             <span>This content was shared via a one-time ZK-Link. It has now been deleted from our servers.</span>
                         </div>
@@ -119,7 +112,7 @@ export default function SharePage() {
                 )}
 
                 <div className="pt-4 text-center">
-                    <a href="/" className="text-faint hover:text-foreground text-xs transition-colors underline-offset-4 underline">
+                    <a href="/" className="text-[#7342E2] font-semibold hover:underline text-xs">
                         Protect your own passwords with Alyra Lock →
                     </a>
                 </div>

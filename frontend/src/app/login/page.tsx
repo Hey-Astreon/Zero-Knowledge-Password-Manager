@@ -4,13 +4,11 @@ import { useState } from 'react';
 import { Button } from '@/components/Button';
 import { Input } from '@/components/Input';
 import { Logo } from '@/components/Logo';
-import { ThemeToggle } from '@/components/ThemeToggle';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import api from '@/services/api';
 import { deriveKey, encryptData, decodeBinary, deriveAuthHash } from '@/utils/crypto';
-import { KeyRound, AlertCircle } from 'lucide-react';
 
 const VERIFY_TOKEN_KEY = 'zk_verify_token';
 const VERIFY_PLAINTEXT = 'zk-pass-verified';
@@ -69,36 +67,25 @@ export default function Login() {
     };
 
     return (
-        <div className="min-h-screen bg-background text-foreground flex flex-col items-center justify-center p-6 relative overflow-hidden">
-            {/* Backdrop */}
-            <div className="absolute inset-0 bg-grid opacity-50" />
-            <div className="bg-orb w-[500px] h-[500px] top-[-180px] left-1/2 -translate-x-1/2 bg-indigo-600/15" />
-            <div className="bg-orb w-[400px] h-[400px] bottom-[-160px] right-[-120px] bg-cyan-500/10" />
-
-            {/* Top bar */}
-            <div className="absolute top-0 inset-x-0 z-20 flex items-center justify-between px-6 py-4">
-                <Logo size="sm" />
-                <ThemeToggle />
-            </div>
-
-            <motion.div
+        <div className="min-h-screen bg-white text-[#192837] flex flex-col items-center justify-center p-6 font-sans selection:bg-[#7342E2]/20">
+            <motion.div 
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="w-full max-w-md space-y-6 relative z-10"
+                className="w-full max-w-md space-y-8"
             >
-                {/* Header */}
+                {/* Logo & Header */}
                 <div className="text-center space-y-3">
-                    <div className="inline-flex w-14 h-14 rounded-2xl bg-gradient-premium neon-glow items-center justify-center text-white shadow-lg">
-                        <KeyRound size={26} />
+                    <div className="inline-flex items-center justify-center">
+                        <Logo size={48} color="#192837" />
                     </div>
                     <div>
-                        <h1 className="text-3xl font-bold text-foreground tracking-tight">Welcome Back</h1>
-                        <p className="text-muted text-xs font-mono uppercase tracking-widest mt-1.5">Unlock Your Zero-Knowledge Vault</p>
+                        <h1 className="font-heading text-3xl font-bold text-[#192837] tracking-tight">Welcome Back</h1>
+                        <p className="text-[#192837]/60 text-xs font-mono uppercase tracking-widest mt-1">Unlock Your Zero-Knowledge Vault</p>
                     </div>
                 </div>
 
-                {/* Card */}
-                <div className="glass-panel p-8 rounded-3xl space-y-6">
+                {/* Portal Auth Card */}
+                <div className="bg-[#F2F2EE] border border-[#192837]/10 p-8 rounded-[24px] shadow-[0_10px_30px_-10px_rgba(25,40,55,0.08)] space-y-6">
                     <form onSubmit={handleSubmit} className="space-y-4">
                         <Input
                             label="Email Address"
@@ -118,47 +105,49 @@ export default function Login() {
                                 onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                             />
                             <div className="flex justify-end mt-2">
-                                <Link href="/forgot-password" className="text-xs font-mono font-semibold text-primary hover:underline">
+                                <Link href="/forgot-password" className="text-xs font-mono font-semibold text-[#7342E2] hover:underline">
                                     Forgot Master Password?
                                 </Link>
                             </div>
                         </div>
-
+                        
                         {error && (
-                            <div className="flex items-center gap-2 p-3 bg-rose-500/10 border border-rose-500/25 rounded-xl">
-                                <AlertCircle size={14} className="text-rose-500 shrink-0" />
-                                <p className="text-xs text-rose-600 dark:text-rose-400 font-mono font-semibold">{error}</p>
+                            <div className="p-3 bg-rose-100 border border-rose-300 rounded-xl">
+                                <p className="text-xs text-rose-800 font-mono text-center font-semibold">{error}</p>
                             </div>
                         )}
 
-                        <Button type="submit" className="w-full h-12 text-sm font-semibold" disabled={loading}>
+                        <button 
+                            type="submit" 
+                            className="w-full h-11 text-sm font-semibold bg-[#7342E2] hover:bg-[#6836D1] text-white rounded-full shadow-[0_4px_24px_rgba(115,66,226,0.28)] transition-all active:scale-95" 
+                            disabled={loading}
+                        >
                             {loading ? 'Unlocking Vault...' : 'Unlock Vault'}
-                        </Button>
+                        </button>
                     </form>
 
-                    <div className="relative my-2">
+                    <div className="relative my-4">
                         <div className="absolute inset-0 flex items-center">
-                            <span className="w-full border-t border-border"></span>
+                            <span className="w-full border-t border-[#192837]/10"></span>
                         </div>
                         <div className="relative flex justify-center text-[10px] font-mono uppercase tracking-widest">
-                            <span className="bg-surface px-3 text-faint font-semibold">Or Continue With</span>
+                            <span className="bg-[#F2F2EE] px-3 text-[#192837]/60 font-semibold">Or Continue With</span>
                         </div>
                     </div>
 
-                    <Button
-                        variant="secondary"
-                        className="w-full h-11 gap-2.5 text-xs font-mono font-semibold uppercase tracking-wider"
+                    <button 
                         onClick={handleGitHubOAuth}
                         type="button"
+                        className="w-full h-11 flex items-center justify-center gap-2.5 text-xs font-mono font-semibold uppercase tracking-wider bg-white border border-[#192837]/15 text-[#192837] hover:bg-slate-50 rounded-full shadow-xs transition-all active:scale-95"
                     >
                         <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
                         Continue with GitHub
-                    </Button>
+                    </button>
                 </div>
 
-                <p className="text-center text-muted text-xs font-mono">
+                <p className="text-center text-[#192837]/60 text-xs font-mono">
                     Don&rsquo;t have a vault yet?{' '}
-                    <Link href="/signup" className="text-primary font-bold hover:underline">
+                    <Link href="/signup" className="text-[#7342E2] font-bold hover:underline">
                         Create One Now
                     </Link>
                 </p>

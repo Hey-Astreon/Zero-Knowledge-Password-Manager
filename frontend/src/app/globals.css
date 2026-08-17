@@ -1,161 +1,71 @@
+@import url('https://db.onlinewebfonts.com/c/04e6981992c0e2e7642af2074ebe3901?family=Helvetica+Now+Display+Bold');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
 @import "tailwindcss/index.css";
 
-/* Class-based dark mode (`.dark` on <html>) */
-@custom-variant dark (&:where(.dark, .dark *));
-
-/* ─────────────────────────────────────────────
-   DESIGN TOKENS — mapped into Tailwind utilities
-   ───────────────────────────────────────────── */
-@theme inline {
-  --font-sans: var(--font-inter), "Inter", ui-sans-serif, system-ui, sans-serif;
-  --font-mono: var(--font-mono), "JetBrains Mono", ui-monospace, monospace;
-
-  /* Semantic colors */
-  --color-background: var(--bg);
-  --color-surface: var(--surface);
-  --color-elevated: var(--elevated);
-  --color-border: var(--border-c);
-  --color-primary: var(--primary);
-  --color-primary-strong: var(--primary-strong);
-  --color-accent: var(--accent);
-  --color-foreground: var(--fg);
-  --color-muted: var(--muted);
-  --color-faint: var(--faint);
-  --color-text-secondary: var(--muted); /* legacy alias used by some pages */
-
-  /* Shadows */
-  --shadow-card: 0 1px 2px rgba(15, 23, 42, 0.04), 0 8px 24px -8px rgba(15, 23, 42, 0.08);
-  --shadow-card-hover: 0 2px 4px rgba(15, 23, 42, 0.05), 0 16px 40px -12px rgba(15, 23, 42, 0.16);
-  --shadow-glow: 0 0 0 1px rgba(99, 102, 241, 0.25), 0 8px 32px -6px rgba(99, 102, 241, 0.45);
-}
-
-/* ─────────────────────────────────────────────
-   LIGHT THEME (default tokens)
-   ───────────────────────────────────────────── */
 :root {
-  --bg: #f7f8fc;
-  --surface: #ffffff;
-  --elevated: #ffffff;
-  --border-c: #e4e7ef;
-  --primary: #4f46e5;
-  --primary-strong: #4338ca;
-  --accent: #0891b2;
-  --fg: #0f172a;
-  --muted: #55617a;
-  --faint: #94a0b8;
-
-  color-scheme: light;
-}
-
-/* ─────────────────────────────────────────────
-   DARK THEME (default for the app)
-   ───────────────────────────────────────────── */
-.dark {
-  --bg: #07070d;
-  --surface: #0e0e18;
-  --elevated: #151522;
-  --border-c: #232338;
-  --primary: #818cf8;
-  --primary-strong: #a5b4fc;
-  --accent: #22d3ee;
-  --fg: #f2f3f8;
-  --muted: #9aa3b8;
-  --faint: #5d6577;
-
-  color-scheme: dark;
+  --font-heading: 'Helvetica Now Display Bold', 'Inter', sans-serif;
+  --font-body: 'Inter', sans-serif;
+  --color-text: #192837;
+  --color-accent: #7342E2;
+  --color-login-bg: #F2F2EE;
 }
 
 * {
   box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
-
-html {
-  scroll-behavior: smooth;
 }
 
 body {
-  background: var(--bg);
-  color: var(--fg);
-  font-family: var(--font-sans);
+  margin: 0;
+  padding: 0;
+  font-family: var(--font-body);
+  color: var(--color-text);
+  background-color: #ffffff;
   overflow-x: hidden;
-  -webkit-font-smoothing: antialiased;
-  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-::selection {
-  background: color-mix(in srgb, var(--primary) 25%, transparent);
+.font-heading {
+  font-family: var(--font-heading);
 }
 
-/* Custom scrollbar */
-::-webkit-scrollbar {
-  width: 10px;
-  height: 10px;
-}
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-::-webkit-scrollbar-thumb {
-  background: var(--border-c);
-  border-radius: 8px;
-  border: 2px solid var(--bg);
-}
-::-webkit-scrollbar-thumb:hover {
-  background: var(--faint);
+.font-body {
+  font-family: var(--font-body);
 }
 
-/* ─────────────────────────────────────────────
-   PREMIUM UTILITY CLASSES
-   ───────────────────────────────────────────── */
-
-/* Frosted glass card */
-.glass-panel {
-  background: var(--surface);
-  border: 1px solid var(--border-c);
-  box-shadow: var(--shadow-card);
-  backdrop-filter: blur(16px);
+/* Glass & Card Utilities for Portal Theme */
+.portal-card {
+  background: #ffffff;
+  border: 1px solid rgba(25, 40, 55, 0.08);
+  border-radius: 24px;
+  box-shadow: 0 10px 30px -10px rgba(25, 40, 55, 0.08);
+  transition: all 0.3s ease;
 }
 
-/* Signature indigo → violet → cyan gradient */
-.bg-gradient-premium {
-  background-image: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #06b6d4 100%);
+.portal-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 20px 40px -15px rgba(115, 66, 226, 0.15);
+  border-color: rgba(115, 66, 226, 0.2);
 }
 
-/* Soft neon halo for primary elements */
-.neon-glow {
-  box-shadow: 0 0 0 1px rgba(99, 102, 241, 0.25), 0 8px 32px -6px rgba(99, 102, 241, 0.45);
+.portal-btn-primary {
+  background-color: #7342E2;
+  color: #ffffff;
+  border-radius: 50px;
+  box-shadow: 0 4px 24px rgba(115, 66, 226, 0.28);
+  transition: all 0.2s ease;
 }
 
-/* Gradient text */
-.text-gradient {
-  background-image: linear-gradient(120deg, #818cf8, #c084fc 55%, #22d3ee);
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-  color: transparent;
+.portal-btn-primary:hover {
+  filter: brightness(1.1);
+  transform: scale(1.02);
 }
 
-/* Subtle grid backdrop */
-.bg-grid {
-  background-image:
-    linear-gradient(to right, var(--border-c) 1px, transparent 1px),
-    linear-gradient(to bottom, var(--border-c) 1px, transparent 1px);
-  background-size: 44px 44px;
-  mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, black 40%, transparent 100%);
-  -webkit-mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, black 40%, transparent 100%);
+.portal-btn-secondary {
+  background-color: #F2F2EE;
+  color: #192837;
+  border-radius: 50px;
+  transition: all 0.2s ease;
 }
 
-/* Ambient blurred orbs */
-.bg-orb {
-  position: absolute;
-  border-radius: 9999px;
-  filter: blur(120px);
-  pointer-events: none;
-}
-
-/* Focus ring for keyboard users */
-:focus-visible {
-  outline: 2px solid var(--primary);
-  outline-offset: 2px;
+.portal-btn-secondary:hover {
+  background-color: #E6E6E0;
 }
