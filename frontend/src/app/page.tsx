@@ -65,17 +65,17 @@ export default function Landing() {
   ];
 
   return (
-    <div className="min-h-screen relative overflow-x-hidden bg-white text-[#192837]">
-      {/* Background Video */}
+    <div className="min-h-screen relative overflow-x-hidden bg-[#ffffff] text-[#192837] isolate">
+      {/* Background Video with GPU layer isolation */}
       <video
         autoPlay
         muted
         loop
         playsInline
-        className="absolute inset-0 z-0 w-full h-full object-cover"
+        className="absolute inset-0 z-0 w-full h-full object-cover [transform:translateZ(0)] [backface-visibility:hidden] will-change-transform"
         src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260606_131516_eca35265-ea66-4fbd-8d52-22aae6e1a503.mp4"
       />
-      {/* Anti-glitch Video Backdrop Overlay */}
+      {/* Anti-glitch Solid Mask Overlay */}
       <div className="absolute inset-0 z-0 bg-white/20 pointer-events-none" />
 
       {/* Navbar */}
