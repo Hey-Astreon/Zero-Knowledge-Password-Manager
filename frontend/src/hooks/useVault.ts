@@ -11,8 +11,6 @@ export const useVault = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
-    const vaultScore = useMemo(() => calculateVaultScore(decryptedEntries), [decryptedEntries]);
-
     const fetchEntries = useCallback(async () => {
         try {
             setLoading(true);
@@ -58,11 +56,21 @@ export const useVault = () => {
                     }
                 })
             );
-            setDecryptedEntries(results.filter((e) => e.site !== '__zk_verify__'));
+
+            // Filter out internal zero-knowledge verify payloads while keeping user vault items
+            const userVaultItems = results.filter((e) => e.site !== '__zk_verify__' && e.verify !== 'zk-pass-verified');
+            setDecryptedEntries(userVaultItems.length > 0 ? userVaultItems : results);
         };
 
         decryptAll();
     }, [rawEntries, key, isLocked]);
+
+    // Calculate score using decrypted entries or fallback raw entries
+    const vaultScore = useMemo(() => {
+        const targetEntries = decryptedEntries.length > 0 ? decryptedEntries : rawEntries;
+        const validEntries = targetEntries.filter((e) => e.site !== '__zk_verify__' && e.verify !== 'zk-pass-verified');
+        return calculateVaultScore(validEntries);
+    }, [decryptedEntries, rawEntries]);
 
     const addEntry = async (formData: any) => {
         if (!key) {
@@ -82,10 +90,8 @@ export const useVault = () => {
                 Uint8Array.from(atob(salt), c => c.charCodeAt(0)).buffer
             );
 
-            const response = await api.post('/vault', {
-                ...encryptedPayload,
-                // site: formData.site,     <-- REMOVED: Metadata Leakage Fix
-                // username: formData.username <-- REMOVED: Metadata Leakage Fix
+            await api.post('/vault', {
+                ...encryptedPayload
             });
 
             // Refresh entries to show the new one
@@ -127,7 +133,7 @@ export const useVault = () => {
     };
 
     return { 
-        entries: decryptedEntries, 
+        entries: decryptedEntries.filter((e) => e.site !== '__zk_verify__' && e.verify !== 'zk-pass-verified'), 
         loading: loading || (rawEntries.length > 0 && decryptedEntries.length === 0 && !isLocked),
         error, 
         vaultScore,
