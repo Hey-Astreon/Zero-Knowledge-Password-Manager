@@ -40,6 +40,10 @@ export const getSalt = async (req: Request, res: Response, next: NextFunction) =
         const { email } = req.params;
         if (!email) return next(new AppError('Email is required', 400));
 
+        if (email.toLowerCase() === 'ping') {
+            return res.status(200).json({ success: true, message: 'pong' });
+        }
+
         const user = await User.findOne({ email: String(email).toLowerCase().trim() }).select('+vaultSalt');
 
         if (!user || !user.vaultSalt) {

@@ -1,8 +1,7 @@
 'use client';
 
-import { useState } from 'react';
-import { Copy } from 'lucide-react';
-import { Button } from '@/components/Button';
+import { useState, useEffect } from 'react';
+import { Copy, Loader2 } from 'lucide-react';
 import { Input } from '@/components/Input';
 import { Logo } from '@/components/Logo';
 import Link from 'next/link';
@@ -17,9 +16,15 @@ const VERIFY_PLAINTEXT = 'zk-pass-verified';
 export default function Signup() {
     const [formData, setFormData] = useState({ email: '', password: '' });
     const [loading, setLoading] = useState(false);
+    const [statusMessage, setStatusMessage] = useState<string | null>(null);
     const [error, setError] = useState<string | null>(null);
     const [recoveryKey, setRecoveryKey] = useState<string | null>(null);
     const router = useRouter();
+
+    // Pre-warm Render backend on page mount
+    useEffect(() => {
+        api.get('/auth/salt/ping').catch(() => {});
+    }, []);
 
     const generateRecoveryKey = () => {
         const bytes = crypto.getRandomValues(new Uint8Array(12));
@@ -31,6 +36,7 @@ export default function Signup() {
         e.preventDefault();
         setLoading(true);
         setError(null);
+        setStatusMessage('Deriving zero-knowledge keys...');
 
         try {
             const genKey = generateRecoveryKey();
@@ -41,12 +47,16 @@ export default function Signup() {
 
             const authHash = await deriveAuthHash(formData.password, saltBase64);
 
+            setStatusMessage('Connecting to secure server...');
+
             await api.post('/auth/signup', {
                 email: formData.email,
                 authHash,
                 vaultSalt: saltBase64,
                 recoveryKey: genKey
             });
+
+            setStatusMessage('Encrypting initial vault state...');
 
             const derivedKey = await deriveKey(formData.password, salt.buffer as ArrayBuffer);
             const localToken = await encryptData(
@@ -56,18 +66,14 @@ export default function Signup() {
             );
             localStorage.setItem(VERIFY_TOKEN_KEY, JSON.stringify(localToken));
 
-            const encryptedPayload = await encryptData(
-                { verify: VERIFY_PLAINTEXT },
-                derivedKey,
-                salt.buffer as ArrayBuffer
-            );
-            await api.post('/vault', { ...encryptedPayload });
+            await api.post('/vault', { ...localToken });
 
             setRecoveryKey(genKey);
         } catch (err: any) {
             setError(typeof err === 'string' ? err : err?.message || 'Signup failed');
         } finally {
             setLoading(false);
+            setStatusMessage(null);
         }
     };
 
@@ -115,6 +121,13 @@ export default function Signup() {
                             onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                         />
                         
+                        {statusMessage && (
+                            <div className="p-3 bg-[#7342E2]/10 border border-[#7342E2]/30 rounded-xl flex items-center justify-center gap-2">
+                                <Loader2 className="animate-spin text-[#7342E2]" size={14} />
+                                <p className="text-xs text-[#7342E2] font-mono font-semibold">{statusMessage}</p>
+                            </div>
+                        )}
+
                         {error && (
                             <div className="p-3 bg-rose-100 border border-rose-300 rounded-xl">
                                 <p className="text-xs text-rose-800 font-mono text-center font-semibold">{error}</p>
@@ -123,10 +136,14 @@ export default function Signup() {
 
                         <button 
                             type="submit" 
-                            className="w-full h-11 text-sm font-semibold bg-[#7342E2] hover:bg-[#6836D1] text-white rounded-full shadow-[0_4px_24px_rgba(115,66,226,0.28)] transition-all active:scale-95" 
+                            className="w-full h-11 text-sm font-semibold bg-[#7342E2] hover:bg-[#6836D1] text-white rounded-full shadow-[0_4px_24px_rgba(115,66,226,0.28)] transition-all active:scale-95 flex items-center justify-center gap-2" 
                             disabled={loading}
                         >
-                            {loading ? 'Initializing Vault...' : 'Create Secure Vault'}
+                            {loading ? (
+                                <><Loader2 className="animate-spin" size={16} /> Initializing Vault...</>
+                            ) : (
+                                'Create Secure Vault'
+                            )}
                         </button>
                     </form>
 
