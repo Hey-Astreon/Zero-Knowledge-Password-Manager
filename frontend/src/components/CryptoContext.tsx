@@ -19,17 +19,12 @@ const CryptoContext = createContext<CryptoContextType | undefined>(undefined);
 
 export const CryptoProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const [key, setKey] = useState<CryptoKey | null>(null);
-    const [isLocked, setIsLocked] = useState(false); // NOT locked on fresh page load
+    const [isLocked, setIsLocked] = useState(false);
     const [isBlurred, setIsBlurred] = useState(false);
     const [stealthMode, setStealthMode] = useState(false);
-
-    // Track whether the user had an active vault session in this page lifecycle.
-    // The lockdown overlay should ONLY show if the vault was actively locked mid-session,
-    // not on a fresh page load / refresh.
     const [wasEverUnlocked, setWasEverUnlocked] = useState(false);
 
     const dismissLockdown = useCallback(() => {
-        // Allow user to navigate away from lockdown screen to login
         setIsLocked(false);
         setWasEverUnlocked(false);
     }, []);
@@ -69,7 +64,7 @@ export const CryptoProvider: React.FC<{ children: React.ReactNode }> = ({ childr
             setKey(derivedKey);
             setIsLocked(false);
             setIsBlurred(false);
-            setWasEverUnlocked(true); // Mark that user had an active session
+            setWasEverUnlocked(true);
 
             return saltBase64;
         } catch (error) {
@@ -78,10 +73,9 @@ export const CryptoProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         }
     }, []);
 
-    // Auto-lock on idle and visibility hardening.
-    // Guards only run when a key is active (vault is unlocked).
+    // Auto-lock on 15 minutes of inactivity & visibility hardening
     useEffect(() => {
-        if (!key) return; // Do not attach event listeners when vault is locked
+        if (!key) return;
 
         let idleTimeout: NodeJS.Timeout;
         let blurTimeout: NodeJS.Timeout;
@@ -89,20 +83,17 @@ export const CryptoProvider: React.FC<{ children: React.ReactNode }> = ({ childr
 
         const resetTimer = () => {
             const now = Date.now();
-            // Throttle timer reset to at most once every 5 seconds to reduce CPU churn
-            if (now - lastResetTime < 5000) return;
+            if (now - lastResetTime < 3000) return; // Throttle resets every 3s
             lastResetTime = now;
 
             clearTimeout(idleTimeout);
-            idleTimeout = setTimeout(lock, 15 * 60 * 1000); // 15 mins idle
+            idleTimeout = setTimeout(lock, 15 * 60 * 1000); // 15 mins idle auto-lock
         };
 
         const handleVisibilityChange = () => {
             if (document.hidden && key) {
-                // Blur UI immediately on tab switch
                 setIsBlurred(true);
-                // Lock after 60 seconds hidden
-                blurTimeout = setTimeout(lock, 60 * 1000);
+                blurTimeout = setTimeout(lock, 60 * 1000); // Lock after 60s hidden tab
             } else if (!document.hidden) {
                 clearTimeout(blurTimeout);
                 setIsBlurred(false);
@@ -118,15 +109,18 @@ export const CryptoProvider: React.FC<{ children: React.ReactNode }> = ({ childr
             }
         };
 
-        // Initial idle timer setup
         idleTimeout = setTimeout(lock, 15 * 60 * 1000);
 
         window.addEventListener('mousemove', resetTimer);
+        window.addEventListener('click', resetTimer);
+        window.addEventListener('scroll', resetTimer);
         window.addEventListener('keydown', handleKeyDown);
         document.addEventListener('visibilitychange', handleVisibilityChange);
 
         return () => {
             window.removeEventListener('mousemove', resetTimer);
+            window.removeEventListener('click', resetTimer);
+            window.removeEventListener('scroll', resetTimer);
             window.removeEventListener('keydown', handleKeyDown);
             document.removeEventListener('visibilitychange', handleVisibilityChange);
             clearTimeout(idleTimeout);
@@ -134,8 +128,6 @@ export const CryptoProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         };
     }, [key, lock]);
 
-    // Show lockdown ONLY when the vault was actively locked during this session.
-    // On a fresh page load (refresh), wasEverUnlocked is false, so overlay never shows.
     const showLockdown = isLocked && wasEverUnlocked;
 
     return (

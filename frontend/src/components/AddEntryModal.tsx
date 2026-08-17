@@ -2,7 +2,6 @@
 
 import { useState } from 'react';
 import { X, Globe, User, Lock, Send, Wand2 } from 'lucide-react';
-import { Button } from './Button';
 import { Input } from './Input';
 import { PasswordGenerator } from './PasswordGenerator';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -24,7 +23,7 @@ export const AddEntryModal = ({ isOpen, onClose, onAdd }: AddEntryModalProps) =>
     const [showGenerator, setShowGenerator] = useState(false);
 
     const handleApplyPassword = (pass: string) => {
-        setFormData({ ...formData, password: pass });
+        setFormData((prev) => ({ ...prev, password: pass }));
         setShowGenerator(false);
     };
 
@@ -34,7 +33,7 @@ export const AddEntryModal = ({ isOpen, onClose, onAdd }: AddEntryModalProps) =>
 
         const entryData = {
             ...formData,
-            iv: null // Phase 1: plain-text fallback
+            iv: null
         };
 
         const success = await onAdd(entryData);
@@ -52,7 +51,7 @@ export const AddEntryModal = ({ isOpen, onClose, onAdd }: AddEntryModalProps) =>
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
-                    className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm"
+                    className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#192837]/40 backdrop-blur-md font-sans"
                     onClick={onClose}
                 >
                     <motion.div
@@ -61,14 +60,14 @@ export const AddEntryModal = ({ isOpen, onClose, onAdd }: AddEntryModalProps) =>
                         exit={{ opacity: 0, scale: 0.95, y: 16 }}
                         transition={{ type: 'spring', damping: 26, stiffness: 300 }}
                         onClick={(e) => e.stopPropagation()}
-                        className="bg-surface border border-border rounded-3xl w-full max-w-md shadow-2xl overflow-hidden"
+                        className="bg-[#F2F2EE] border border-[#192837]/10 rounded-[24px] w-full max-w-md shadow-2xl overflow-hidden"
                     >
                         {/* Header */}
-                        <div className="px-6 py-4 border-b border-border flex justify-between items-center bg-elevated/60">
-                            <h2 className="text-foreground font-bold text-lg">Add New Password</h2>
-                            <Button variant="ghost" size="sm" onClick={onClose} className="p-1 h-auto">
+                        <div className="px-6 py-4 border-b border-[#192837]/10 flex justify-between items-center bg-white/60">
+                            <h2 className="font-heading text-[#192837] font-bold text-lg">Add New Password</h2>
+                            <button onClick={onClose} className="p-1 text-[#192837]/60 hover:text-[#192837] rounded-lg">
                                 <X size={20} />
-                            </Button>
+                            </button>
                         </div>
 
                         {/* Body */}
@@ -104,7 +103,7 @@ export const AddEntryModal = ({ isOpen, onClose, onAdd }: AddEntryModalProps) =>
                                     type="button"
                                     onClick={() => setShowGenerator(!showGenerator)}
                                     className={`absolute right-3 top-9 p-1.5 rounded-lg transition-all ${
-                                        showGenerator ? 'bg-primary text-white shadow-glow' : 'text-faint hover:text-primary hover:bg-primary/10'
+                                        showGenerator ? 'bg-[#7342E2] text-white shadow-md' : 'text-[#192837]/60 hover:text-[#7342E2] hover:bg-[#7342E2]/10'
                                     }`}
                                     title="Generate Secure Password"
                                 >
@@ -117,14 +116,15 @@ export const AddEntryModal = ({ isOpen, onClose, onAdd }: AddEntryModalProps) =>
                                     initial={{ opacity: 0, y: -8 }}
                                     animate={{ opacity: 1, y: 0 }}
                                 >
-                                    <PasswordGenerator onApply={handleApplyPassword} />
+                                    <PasswordGenerator onSelectPassword={handleApplyPassword} compact />
                                 </motion.div>
                             )}
+
                             <div className="space-y-1.5">
-                                <label className="text-sm font-medium text-muted">Notes (Optional)</label>
+                                <label className="text-xs font-mono font-bold uppercase text-[#192837] tracking-wider">Notes (Optional)</label>
                                 <textarea
                                     rows={3}
-                                    className="w-full bg-surface border border-border text-foreground rounded-xl px-3 py-2 outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all placeholder:text-faint shadow-card text-sm"
+                                    className="w-full bg-white border border-[#192837]/15 text-[#192837] rounded-xl px-3 py-2 outline-none focus:ring-2 focus:ring-[#7342E2]/30 focus:border-[#7342E2] transition-all placeholder:text-[#192837]/40 text-xs font-mono"
                                     placeholder="Add a hint or note..."
                                     value={formData.notes}
                                     onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
@@ -132,14 +132,22 @@ export const AddEntryModal = ({ isOpen, onClose, onAdd }: AddEntryModalProps) =>
                             </div>
 
                             <div className="pt-4 flex gap-3">
-                                <Button type="button" variant="secondary" onClick={onClose} className="flex-1">
+                                <button 
+                                    type="button" 
+                                    onClick={onClose} 
+                                    className="flex-1 h-11 text-xs font-mono font-semibold uppercase tracking-wider bg-white border border-[#192837]/15 text-[#192837] hover:bg-slate-50 rounded-full transition-all"
+                                >
                                     Cancel
-                                </Button>
-                                <Button type="submit" className="flex-1" disabled={isSubmitting}>
+                                </button>
+                                <button 
+                                    type="submit" 
+                                    className="flex-1 h-11 text-xs font-mono font-semibold uppercase tracking-wider bg-[#7342E2] hover:bg-[#6836D1] text-white rounded-full shadow-[0_4px_24px_rgba(115,66,226,0.28)] flex items-center justify-center gap-2 transition-all active:scale-95" 
+                                    disabled={isSubmitting}
+                                >
                                     {isSubmitting ? 'Saving...' : (
                                         <><Send size={16} /> Save Entry</>
                                     )}
-                                </Button>
+                                </button>
                             </div>
                         </form>
                     </motion.div>
