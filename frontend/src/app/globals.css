@@ -1,107 +1,214 @@
 @import "tailwindcss/index.css";
 
 @theme inline {
-  --color-background: #030712;
-  --color-foreground: #F9FAFB;
-  --color-surface: #0B0F19;
-  --color-surface-hover: #111827;
-  --color-primary: #00F2FE;
-  --color-secondary: #7F00FF;
-  --color-accent: #38EF7D;
-  --color-text-secondary: #9CA3AF;
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--font-inter), "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-mono), "JetBrains Mono", monospace;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
 body {
-  background: var(--color-background);
-  color: var(--color-foreground);
+  background: #ffffff;
+  color: #0f172a;
+  font-family: var(--font-sans);
   overflow-x: hidden;
 }
 
-/* Custom Cyber Mesh Grid Background */
-.bg-cyber-grid {
+/* Motionsites AI Marketing Section Specs */
+.c1-container {
+  max-width: 1100px;
+  width: 100%;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.c1-badge {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  background: linear-gradient(90deg, #F5C344, #F28482, #B567C2);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 16px;
+  display: inline-block;
+}
+
+.c1-title {
+  font-size: 2.75rem;
+  font-weight: 500;
+  color: #0f172a;
+  letter-spacing: -0.02em;
+  margin-bottom: 12px;
+}
+
+.c1-subtitle {
+  font-size: 1.125rem;
+  color: #64748b;
+  line-height: 1.5;
+  margin-bottom: 50px;
+}
+
+.c1-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+
+@media (max-width: 900px) {
+  .c1-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .c1-grid {
+    grid-template-columns: 1fr;
+  }
+  .c1-title {
+    font-size: 2.25rem;
+  }
+}
+
+/* Base Card Specs */
+.c1-card {
+  border-radius: 20px;
+  height: 340px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  position: relative;
+  overflow: hidden;
+  text-align: left;
+  background: #F4F8F9;
+  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.c1-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.15);
+}
+
+.c1-card h3 {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: #1e293b;
+  padding: 24px;
+  z-index: 2;
+  position: relative;
+}
+
+/* Card 1 Specs */
+.c1-card-1 {
+  background: radial-gradient(circle at 50% 0%, #FFB347 0%, #F9ED96 30%, #F4F8F9 60%, #F4F8F9 100%);
+}
+
+.c1-blur-text {
+  background: linear-gradient(90deg, #FFB347, #E5A1F5);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-weight: 600;
+}
+
+/* Card 2 Specs */
+.c1-card-2 {
+  background: radial-gradient(circle at 50% 0%, #E5A1F5 0%, #F8ACA0 30%, #F4F8F9 60%, #F4F8F9 100%);
+}
+
+.c1-api-visual {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 70px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 24px;
+}
+
+.c1-network-img {
+  width: 100%;
+  height: 180px;
+  object-fit: contain;
+  margin-top: 20px;
+}
+
+/* Card 3 Specs */
+.c1-card-3 {
+  background: radial-gradient(circle at 50% 0%, #F9ED96 0%, #E5A1F5 30%, #F4F8F9 60%, #F4F8F9 100%);
+}
+
+.c1-mesh {
+  position: absolute;
+  inset: 0;
   background-image: 
-    linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
-  background-size: 40px 40px;
+    linear-gradient(to right, rgba(255, 255, 255, 0.8) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.8) 1px, transparent 1px);
+  background-size: 16px 16px;
+  -webkit-mask-image: radial-gradient(circle at center top, black 0%, transparent 80%);
+  mask-image: radial-gradient(circle at center top, black 0%, transparent 80%);
 }
 
-/* Glassmorphism & Cyber Card Effects */
-.glass-panel {
-  background: rgba(11, 15, 25, 0.65);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+.c1-folder {
+  position: absolute;
+  top: 50px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 170px;
+  filter: drop-shadow(0 15px 25px rgba(0, 0, 0, 0.08));
 }
 
-.glass-panel-hover {
-  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+.c1-search {
+  position: absolute;
+  top: 220px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #ffffff;
+  border: 1px solid #000000;
+  padding: 6px 18px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: #1e293b;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  z-index: 2;
 }
 
-.glass-panel-hover:hover {
-  background: rgba(17, 24, 39, 0.8);
-  border-color: rgba(0, 242, 254, 0.3);
-  box-shadow: 0 25px 60px rgba(0, 242, 254, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.2);
-  transform: translateY(-2px);
+/* Add Details Pill Button */
+.c1-pill-btn {
+  position: absolute;
+  top: 180px;
+  left: 40px;
+  background: #ffffff;
+  border: 1px solid #000000;
+  padding: 5px 14px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #1e293b;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  z-index: 2;
 }
 
-/* Neon Glow Utilities */
-.neon-glow {
-  box-shadow: 0 0 25px 2px rgba(0, 242, 254, 0.35);
-}
-
-.neon-glow-secondary {
-  box-shadow: 0 0 25px 2px rgba(127, 0, 255, 0.35);
-}
-
-.text-gradient {
-  background: linear-gradient(135deg, #00F2FE 0%, #4FACFE 50%, #7F00FF 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-
-.text-gradient-emerald {
-  background: linear-gradient(135deg, #10B981 0%, #34D399 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-
-.bg-gradient-premium {
-  background: linear-gradient(135deg, #00F2FE 0%, #7F00FF 100%);
-}
-
-.bg-gradient-premium:hover {
-  background: linear-gradient(135deg, #38EF7D 0%, #00F2FE 100%);
-}
-
-/* Custom Keyframe Animations */
-@keyframes radar-sweep {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
-.animate-radar {
-  animation: radar-sweep 8s linear infinite;
-}
-
-@keyframes float-subtle {
-  0%, 100% { transform: translateY(0px); }
-  50% { transform: translateY(-8px); }
-}
-
-.animate-float {
-  animation: float-subtle 4s ease-in-out infinite;
-}
-
-@keyframes shimmer {
-  0% { background-position: -200% 0; }
-  100% { background-position: 200% 0; }
-}
-
-.animate-shimmer {
-  background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0) 100%);
-  background-size: 200% 100%;
-  animation: shimmer 3s infinite;
+.c1-cursor {
+  position: absolute;
+  top: 205px;
+  left: 110px;
+  width: 24px;
+  height: 24px;
+  filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.2));
+  z-index: 10;
 }

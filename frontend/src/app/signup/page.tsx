@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Shield, Lock, CheckCircle2, Copy } from 'lucide-react';
+import { Shield, Copy } from 'lucide-react';
 import { Button } from '@/components/Button';
 import { Input } from '@/components/Input';
 import Link from 'next/link';
@@ -77,30 +77,26 @@ export default function Signup() {
     };
 
     return (
-        <div className="min-h-screen bg-background flex flex-col items-center justify-center p-6 relative overflow-hidden bg-cyber-grid selection:bg-primary/30">
-            {/* Ambient Background Glow */}
-            <div className="absolute top-[-15%] left-[-15%] w-[55%] h-[55%] bg-primary/15 blur-[180px] rounded-full pointer-events-none" />
-            <div className="absolute bottom-[-15%] right-[-15%] w-[55%] h-[55%] bg-secondary/15 blur-[180px] rounded-full pointer-events-none" />
-
+        <div className="min-h-screen bg-white text-slate-900 flex flex-col items-center justify-center p-6 font-sans selection:bg-amber-200">
             <motion.div 
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="w-full max-w-md space-y-8 relative z-10"
+                className="w-full max-w-md space-y-8"
             >
                 {/* Logo & Header */}
                 <div className="text-center space-y-3">
-                    <div className="inline-flex w-16 h-16 rounded-2xl bg-gradient-premium neon-glow items-center justify-center shadow-xl">
-                        <Shield size={32} className="text-white" />
+                    <div className="inline-flex w-14 h-14 rounded-2xl bg-slate-900 items-center justify-center text-white shadow-lg">
+                        <Shield size={28} />
                     </div>
                     <div>
-                        <h1 className="text-3xl font-black text-white tracking-tight">Create Your Vault</h1>
-                        <p className="text-text-secondary text-xs font-mono uppercase tracking-widest mt-1">Zero-Knowledge Hardware-Grade Privacy</p>
+                        <h1 className="text-3xl font-bold text-slate-900 tracking-tight">Create Your Vault</h1>
+                        <p className="text-slate-500 text-xs font-mono uppercase tracking-widest mt-1">Zero-Knowledge Hardware-Grade Privacy</p>
                     </div>
                 </div>
 
-                {/* Glassmorphic Auth Card */}
-                <div className="glass-panel p-8 md:p-10 rounded-[2.5rem] space-y-6 shadow-2xl">
-                    <form onSubmit={handleSubmit} className="space-y-5">
+                {/* Motionsites Card */}
+                <div className="bg-[#F4F8F9] border border-slate-200 p-8 rounded-[20px] shadow-[0_10px_30px_-10px_rgba(0,0,0,0.08)] space-y-6">
+                    <form onSubmit={handleSubmit} className="space-y-4">
                         <Input
                             label="Email Address"
                             type="email"
@@ -119,28 +115,28 @@ export default function Signup() {
                         />
                         
                         {error && (
-                            <div className="p-3.5 bg-rose-500/10 border border-rose-500/20 rounded-xl">
-                                <p className="text-xs text-rose-400 font-mono text-center">{error}</p>
+                            <div className="p-3 bg-rose-50 border border-rose-200 rounded-xl">
+                                <p className="text-xs text-rose-700 font-mono text-center font-semibold">{error}</p>
                             </div>
                         )}
 
-                        <Button type="submit" className="w-full h-12 text-sm font-bold neon-glow" disabled={loading}>
-                            {loading ? 'Initializing Hardware Vault...' : 'Create Secure Vault'}
+                        <Button type="submit" className="w-full h-11 text-sm font-semibold bg-slate-900 hover:bg-slate-800 text-white rounded-xl shadow-md" disabled={loading}>
+                            {loading ? 'Initializing Vault...' : 'Create Secure Vault'}
                         </Button>
                     </form>
 
-                    <div className="relative my-6">
+                    <div className="relative my-4">
                         <div className="absolute inset-0 flex items-center">
-                            <span className="w-full border-t border-white/10"></span>
+                            <span className="w-full border-t border-slate-200"></span>
                         </div>
                         <div className="relative flex justify-center text-[10px] font-mono uppercase tracking-widest">
-                            <span className="bg-surface px-3 text-text-secondary rounded-full border border-white/10">Or Continue With</span>
+                            <span className="bg-[#F4F8F9] px-3 text-slate-500 font-semibold">Or Continue With</span>
                         </div>
                     </div>
 
                     <Button 
                         variant="secondary" 
-                        className="w-full h-12 gap-3 text-xs font-mono font-bold uppercase tracking-wider bg-zinc-950 border-white/10 hover:border-white/20" 
+                        className="w-full h-11 gap-2.5 text-xs font-mono font-semibold uppercase tracking-wider bg-white border-slate-300 text-slate-800 hover:bg-slate-50 rounded-xl shadow-xs" 
                         type="button" 
                         onClick={handleGitHubOAuth}
                     >
@@ -149,42 +145,42 @@ export default function Signup() {
                     </Button>
                 </div>
 
-                <p className="text-center text-text-secondary text-xs font-mono">
+                <p className="text-center text-slate-500 text-xs font-mono">
                     Already have a vault?{' '}
-                    <Link href="/login" className="text-primary hover:text-white font-bold transition-colors">
+                    <Link href="/login" className="text-slate-900 font-bold hover:underline">
                         Sign In
                     </Link>
                 </p>
             </motion.div>
 
-            {/* Emergency Recovery Kit Modal Overlay */}
+            {/* Recovery Kit Overlay */}
             {recoveryKey && (
-                <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-6">
-                    <div className="glass-panel border border-white/10 max-w-md w-full rounded-[2.5rem] p-8 space-y-6 shadow-2xl">
+                <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-6">
+                    <div className="bg-white border border-slate-200 max-w-md w-full rounded-[20px] p-8 space-y-6 shadow-2xl">
                         <div className="text-center space-y-2">
-                            <div className="w-14 h-14 rounded-2xl bg-amber-500/20 text-amber-400 mx-auto flex items-center justify-center font-bold text-2xl">
+                            <div className="w-12 h-12 rounded-2xl bg-amber-100 text-amber-800 mx-auto flex items-center justify-center font-bold text-xl">
                                 🔑
                             </div>
-                            <h2 className="text-2xl font-black text-white tracking-tight">Save Your Recovery Kit</h2>
-                            <p className="text-xs text-text-secondary leading-relaxed">
+                            <h2 className="text-2xl font-bold text-slate-900 tracking-tight">Save Your Recovery Kit</h2>
+                            <p className="text-xs text-slate-500 leading-relaxed">
                                 Because Alyra Lock is zero-knowledge, this 24-character key is the ONLY way to recover your account if you forget your master password.
                             </p>
                         </div>
 
-                        <div className="bg-zinc-950 border border-white/10 p-4 rounded-2xl text-center font-mono text-sm tracking-widest text-primary select-all">
+                        <div className="bg-[#F4F8F9] border border-slate-300 p-4 rounded-xl text-center font-mono text-sm tracking-wider text-slate-900 font-bold select-all">
                             {recoveryKey}
                         </div>
 
                         <Button 
                             type="button" 
-                            className="w-full h-12 font-bold gap-2 neon-glow"
+                            className="w-full h-11 font-semibold gap-2 bg-slate-900 hover:bg-slate-800 text-white rounded-xl shadow-md"
                             onClick={() => {
                                 navigator.clipboard.writeText(recoveryKey);
                                 router.push('/dashboard');
                             }}
                         >
                             <Copy size={16} />
-                            Copy Key & Proceed to Vault
+                            Copy Key &amp; Proceed to Vault
                         </Button>
                     </div>
                 </div>
