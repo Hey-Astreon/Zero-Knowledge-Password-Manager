@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Zap, LockKeyhole, Fingerprint, ArrowRightCircle, Menu, X, Terminal, Shield, CheckCircle2 } from 'lucide-react';
+import { Zap, LockKeyhole, Fingerprint, ArrowRightCircle, Menu, X, Terminal } from 'lucide-react';
 import { Logo } from '@/components/Logo';
 import { deriveKey, encryptData, generateSalt } from '@/utils/crypto';
 
@@ -75,6 +75,8 @@ export default function Landing() {
         className="absolute inset-0 z-0 w-full h-full object-cover"
         src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260606_131516_eca35265-ea66-4fbd-8d52-22aae6e1a503.mp4"
       />
+      {/* Anti-glitch Video Backdrop Overlay */}
+      <div className="absolute inset-0 z-0 bg-white/20 pointer-events-none" />
 
       {/* Navbar */}
       <nav className="relative z-20 max-w-[1280px] mx-auto px-5 sm:px-8 py-4 sm:py-5 flex justify-between items-center">
@@ -211,18 +213,20 @@ export default function Landing() {
             initial="hidden"
             animate="visible"
             variants={fadeUp}
-            className="font-heading text-[clamp(1.65rem,5vw,3rem)] leading-[1.05] tracking-[-0.01em] text-[#192837] text-center"
+            className="font-heading text-[clamp(1.65rem,5vw,3rem)] leading-[1.08] tracking-[-0.01em] text-[#192837] text-center"
           >
-            <span className="whitespace-nowrap">
+            <span>
               Lock{' '}
-              <Zap className="inline w-6 h-6 mx-1 relative -top-0.5 text-[#192837]" />{' '}
+              <Zap className="inline-block w-[0.85em] h-[0.85em] relative -top-[2px] mx-1 text-[#192837] align-middle shrink-0" />{' '}
               Down Your{' '}
-              <LockKeyhole className="inline w-6 h-6 mx-1 relative -top-0.5 text-[#192837]" />{' '}
+              <LockKeyhole className="inline-block w-[0.85em] h-[0.85em] relative -top-[2px] mx-1 text-[#192837] align-middle shrink-0" />{' '}
               Passwords
             </span>
-            <br />
-            with Ironclad Security{' '}
-            <Fingerprint className="inline w-6 h-6 ml-1.5 relative -top-0.5 text-[#192837]" />
+            <br className="hidden sm:inline" />
+            <span>
+              {' '}with Ironclad Security{' '}
+              <Fingerprint className="inline-block w-[0.85em] h-[0.85em] relative -top-[2px] ml-1.5 text-[#192837] align-middle shrink-0" />
+            </span>
           </motion.h1>
 
           {/* Subtext */}
